@@ -1,5 +1,8 @@
-import { redirect } from 'next/navigation'
-
 export default function Home() {
-  redirect('/landing.html')
+  return (
+    <main style={{ padding: '50px', textAlign: 'center', fontFamily: 'Arial' }}>
+      <h1>Welcome to Zenrixa! 🚀</h1>
+      <p>The website is now running successfully.</p>
+    </main>
+  );
 }
