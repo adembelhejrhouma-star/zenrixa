@@ -8,6 +8,10 @@ export async function middleware(request: NextRequest) {
 export const config = {
   runtime: 'nodejs',//
   matcher: [
+    '/',           //
+    '/login',
+    '/signup',
+    '/landing',    // ou landing.html
     '/account/:path*',
     '/dashboard/:path*',
     '/checkout',
