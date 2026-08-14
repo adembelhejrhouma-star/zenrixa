@@ -1,0 +1,19 @@
+[project]
+name = "zenrixa"
+plan = "free"
+
+[auth]
+enabled = true
+site_url = "http://localhost:5500"
+additional_redirect_urls = ["https://*.vercel.app"]
+jwt_expiry = 3600
+enable_signup = true
+
+[auth.external.google]
+enabled = true
+
+[analytics]
+enabled = false
+
+[functions]
+enabled = true

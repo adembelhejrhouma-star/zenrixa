@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Account - Zenrixa</title>
+<script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: #000;
+  color: #fff;
+  min-height: 100vh;
+}
+header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24px 48px;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+.brand { display: flex; align-items: center; gap: 12px; cursor: pointer; }
+.brand-icon {
+  width: 32px; height: 32px; border-radius: 8px; background: #fff;
+  display: flex; align-items: center; justify-content: center; padding: 6px;
+}
+.brand-icon svg { width: 100%; height: 100%; color: #0b0b0c; }
+.brand-name { font-weight: 800; font-size: 20px; letter-spacing: -0.02em; }
+.header-right { display: flex; align-items: center; gap: 16px; }
+.email-display { font-size: 13px; color: #a1a1aa; }
+.btn-back {
+  width: 40px; height: 40px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.3);
+  background: rgba(255,255,255,0.08); color: #fff; cursor: pointer; display: flex;
+  align-items: center; justify-content: center; transition: all 0.2s;
+  font-size: 20px; line-height: 1; padding: 0;
+}
+.btn-back:hover { background: rgba(255,255,255,0.2); border-color: #fff; }
+.container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 48px 24px;
+}
+h1 {
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin-bottom: 8px;
+}
+.sub {
+  color: #a1a1aa;
+  font-size: 14px;
+  margin-bottom: 40px;
+}
+.purchases {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.purchase-card {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 16px;
+  padding: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.purchase-left { display: flex; flex-direction: column; gap: 4px; }
+.purchase-plan {
+  font-size: 16px;
+  font-weight: 600;
+}
+.purchase-date {
+  font-size: 12px;
+  color: #737373;
+}
+.purchase-right { text-align: right; }
+.purchase-amount {
+  font-size: 18px;
+  font-weight: 700;
+}
+.purchase-status {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-top: 4px;
+}
+.status-active { color: #22d3ee; }
+.status-pending { color: #f59e0b; }
+.status-failed { color: #ef4444; }
+.empty-state {
+  text-align: center;
+  padding: 64px 24px;
+  border: 1px dashed rgba(255,255,255,0.1);
+  border-radius: 16px;
+}
+.empty-state svg { width: 48px; height: 48px; color: #52525b; margin-bottom: 16px; }
+.empty-state h3 { font-size: 18px; font-weight: 600; margin-bottom: 8px; }
+.empty-state p { color: #737373; font-size: 14px; }
+.loading {
+  text-align: center;
+  padding: 48px;
+  color: #737373;
+  font-size: 14px;
+}
+.alert {
+  padding: 12px;
+  border-radius: 8px;
+  font-size: 13px;
+  margin-bottom: 16px;
+  display: none;
+}
+.alert.error { display: block; background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.3); color: #fca5a5; }
+</style>
+</head>
+<body>
+<header>
+  <div class="brand" onclick="window.location.href='landing.html'">
+    <div class="brand-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+        <path d="M4 4h16v3L8 17h12v3H4v-3l12-10H4V4z" />
+      </svg>
+    </div>
+    <span class="brand-name">Zenrixa</span>
+  </div>
+  <div class="header-right">
+    <span class="email-display" id="user-email"></span>
+    <button class="btn-back" onclick="window.location.href='landing.html'" title="Back to home">&#8592;</button>
+  </div>
+</header>
+<div class="container">
+  <h1>My Account</h1>
+  <p class="sub">Your purchase history</p>
+  <div id="alert" class="alert"></div>
+  <div id="loading" class="loading">Loading your purchases...</div>
+  <div id="purchases-list" class="purchases" style="display:none;"></div>
+  <div id="empty-state" class="empty-state" style="display:none;">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+      <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
+      <line x1="8" y1="21" x2="16" y2="21"/>
+      <line x1="12" y1="17" x2="12" y2="21"/>
+    </svg>
+    <h3>No purchases yet</h3>
+    <p>Your purchased plans will appear here.</p>
+  </div>
+</div>
+<script src="js/env.js"></script>
+<script src="js/supabase-config.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/purchase-handler.js"></script>
+<script>
+async function loadAccount() {
+  const user = await getCurrentUser();
+  if (!user) {
+    window.location.href = 'landing.html';
+    return;
+  }
+  await syncUserProfile();
+  document.getElementById('user-email').textContent = user.email;
+  document.getElementById('loading').style.display = 'block';
+  try {
+    const purchases = await getUserPurchases(user.id);
+    document.getElementById('loading').style.display = 'none';
+    if (!purchases || purchases.length === 0) {
+      document.getElementById('empty-state').style.display = 'block';
+      return;
+    }
+    const list = document.getElementById('purchases-list');
+    list.style.display = 'flex';
+    list.innerHTML = purchases.map(p => {
+      const date = new Date(p.created_at).toLocaleDateString('en-US', {
+        year: 'numeric', month: 'long', day: 'numeric'
+      });
+      const statusClass = p.status === 'active' ? 'status-active' : p.status === 'pending' ? 'status-pending' : 'status-failed';
+      return `<div class="purchase-card">
+        <div class="purchase-left">
+          <span class="purchase-plan">${p.plan_name}</span>
+          <span class="purchase-date">${date}</span>
+        </div>
+        <div class="purchase-right">
+          <div class="purchase-amount">$${p.amount} <span style="font-size:12px;color:#737373;font-weight:400;">${p.currency}</span></div>
+          <div class="purchase-status ${statusClass}">${p.status}</div>
+        </div>
+      </div>`;
+    }).join('');
+  } catch (err) {
+    document.getElementById('loading').style.display = 'none';
+    const alert = document.getElementById('alert');
+    alert.className = 'alert error';
+    alert.textContent = err.message;
+    alert.style.display = 'block';
+  }
+}
+
+async function handleLogout() {
+  await logAuthEvent('logout', null, 'success');
+  await logOut();
+  window.location.href = 'landing.html';
+}
+
+(async () => {
+  const params = new URLSearchParams(window.location.search);
+  const sessionId = params.get('session_id');
+  if (sessionId) {
+    try {
+      const user = await getCurrentUser();
+      if (user) {
+        await ensureBrowserSession();
+        await supabaseClient
+          .from('purchases')
+          .update({ status: 'active' })
+          .eq('stripe_session_id', sessionId);
+      }
+    } catch (_) {}
+    window.history.replaceState({}, '', 'account.html');
+  }
+  loadAccount();
+})();
+</script>
+</body>
+</html>

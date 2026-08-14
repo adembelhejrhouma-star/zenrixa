@@ -1,0 +1,812 @@
+[
+    {
+        "id":  "TC001",
+        "title":  "Complete a basic plan purchase from checkout",
+        "description":  "This verifies that an authenticated user can review a selected basic plan, enter valid payment details, complete checkout, and reach the account experience afterward.",
+        "category":  "Plan Checkout",
+        "steps":  [
+                      {
+                          "type":  "action",
+                          "description":  "Navigate to /login.html"
+                      },
+                      {
+                          "type":  "action",
+                          "description":  "Fill in the email field with {{LOGIN_USER}}"
+                      },
+                      {
+                          "type":  "action",
+                          "description":  "Fill in the password field with {{LOGIN_PASSWORD}}"
+                      },
+                      {
+                          "type":  "action",
+                          "description":  "Submit the login form"
+                      },
+                      {
+                          "type":  "action",
+                          "description":  "Navigate to /checkout.html?plan=basic\u0026billing=on_6_months"
+                      },
+                      {
+                          "type":  "action",
+                          "description":  "Enter a cardholder name"
+                      },
+                      {
+                          "type":  "action",
+                          "description":  "Select a country or region"
+                      },
+                      {
+                          "type":  "action",
+                          "description":  "Enter valid card details"
+                      },
+                      {
+                          "type":  "action",
+                          "description":  "Submit the payment form"
+                      },
+                      {
+                          "type":  "assertion",
+                          "description":  "Verify a purchase completion confirmation is visible"
+                      },
+                      {
+                          "type":  "assertion",
+                          "description":  "Verify the account experience is displayed"
+                      }
+                  ],
+        "priority":  "High"
+    },
+    {
+        "id":  "TC002",
+        "title":  "Keep account access after payment completes",
+        "description":  "This verifies that after a successful checkout flow the user can continue into the signed-in account experience with purchase access visible.",
+        "category":  "Plan Checkout",
+        "steps":  [
+                      {
+                          "type":  "action",
+                          "description":  "Navigate to /login.html"
+                      },
+                      {
+                          "type":  "action",
+                          "description":  "Fill in the email field with {{LOGIN_USER}}"
+                      },
+                      {
+                          "type":  "action",
+                          "description":  "Fill in the password field with {{LOGIN_PASSWORD}}"
+                      },
+                      {
+                          "type":  "action",
+                          "description":  "Submit the login form"
+                      },
+                      {
+                          "type":  "action",
+                          "description":  "Navigate to /checkout.html?plan=standard\u0026billing=six"
+                      },
+                      {
+                          "type":  "action",
+                          "description":  "Enter a cardholder name"
+                      },
+                      {
+                          "type":  "action",
+                          "description":  "Select a country or region"
+                      },
+                      {
+                          "type":  "action",
+                          "description":  "Enter valid card details"
+                      },
+                      {
+                          "type":  "action",
+                          "description":  "Submit the payment form"
+                      },
+                      {
+                          "type":  "assertion",
+                          "description":  "Verify the account experience is displayed"
+                      },
+                      {
+                          "type":  "assertion",
+                          "description":  "Verify purchase access is visible"
+                      }
+                  ],
+        "priority":  "High"
+    },
+    {
+        "id":  "TC003",
+        "title":  "See checkout blocked without a signed-in session",
+        "description":  "An unauthenticated visitor is prevented from using checkout and is prompted to authenticate first.",
+        "category":  "Plan Selection",
+        "steps":  [
+                      {
+                          "type":  "action",
+                          "description":  "Navigate to /checkout.html?plan=basic\u0026billing=on_6_months"
+                      },
+                      {
+                          "type":  "assertion",
+                          "description":  "Verify an authentication required state is displayed"
+                      }
+                  ],
+        "priority":  "High"
+    },
+    {
+        "id":  "TC004",
+        "title":  "Complete a standard plan purchase from checkout",
+        "description":  "This verifies that an authenticated user can review a selected standard six-month plan, pay successfully, and return to the account experience.",
+        "category":  "Plan Checkout",
+        "steps":  [
+                      {
+                          "type":  "action",
+                          "description":  "Navigate to /login.html"
+                      },
+                      {
+                          "type":  "action",
+                          "description":  "Fill in the email field with {{LOGIN_USER}}"
+                      },
+                      {
+                          "type":  "action",
+                          "description":  "Fill in the password field with {{LOGIN_PASSWORD}}"
+                      },
+                      {
+                          "type":  "action",
+                          "description":  "Submit the login form"
+                      },
+                      {
+                          "type":  "action",
+                          "description":  "Navigate to /checkout.html?plan=standard\u0026billing=six"
+                      },
+                      {
+                          "type":  "action",
+                          "description":  "Enter a cardholder name"
+                      },
+                      {
+                          "type":  "action",
+                          "description":  "Select a country or region"
+                      },
+                      {
+                          "type":  "action",
+                          "description":  "Enter valid card details"
+                      },
+                      {
+                          "type":  "action",
+                          "description":  "Submit the payment form"
+                      },
+                      {
+                          "type":  "assertion",
+                          "description":  "Verify a purchase completion confirmation is visible"
+                      },
+                      {
+                          "type":  "assertion",
+                          "description":  "Verify the account experience is displayed"
+                      }
+                  ],
+        "priority":  "High"
+    },
+    {
+        "id":  "TC005",
+        "title":  "Complete a pro plan purchase from checkout",
+        "description":  "This verifies that an authenticated user can review a selected pro forever plan, pay successfully, and reach the account experience afterward.",
+        "category":  "Plan Checkout",
+        "steps":  [
+                      {
+                          "type":  "action",
+                          "description":  "Navigate to /login.html"
+                      },
+                      {
+                          "type":  "action",
+                          "description":  "Fill in the email field with {{LOGIN_USER}}"
+                      },
+                      {
+                          "type":  "action",
+                          "description":  "Fill in the password field with {{LOGIN_PASSWORD}}"
+                      },
+                      {
+                          "type":  "action",
+                          "description":  "Submit the login form"
+                      },
+                      {
+                          "type":  "action",
+                          "description":  "Navigate to /checkout.html?plan=pro\u0026billing=forever"
+                      },
+                      {
+                          "type":  "action",
+                          "description":  "Enter a cardholder name"
+                      },
+                      {
+                          "type":  "action",
+                          "description":  "Select a country or region"
+                      },
+                      {
+                          "type":  "action",
+                          "description":  "Enter valid card details"
+                      },
+                      {
+                          "type":  "action",
+                          "description":  "Submit the payment form"
+                      },
+                      {
+                          "type":  "assertion",
+                          "description":  "Verify a purchase completion confirmation is visible"
+                      },
+                      {
+                          "type":  "assertion",
+                          "description":  "Verify the account experience is displayed"
+                      }
+                  ],
+        "priority":  "High"
+    },
+    {
+        "id":  "TC006",
+        "title":  "Continue to checkout from the landing modal after login",
+        "description":  "A visitor who has already selected a plan can log in from the landing modal and proceed to checkout with the pending plan preserved.",
+        "category":  "User Login",
+        "steps":  [
+                      {
+                          "type":  "action",
+                          "description":  "Navigate to /landing.html"
+                      },
+                      {
+                          "type":  "action",
+                          "description":  "Choose a plan and billing cycle"
+                      },
+                      {
+                          "type":  "action",
+                          "description":  "Open the login modal"
+                      },
+                      {
+                          "type":  "action",
+                          "description":  "Fill in the email field with {{LOGIN_USER}}"
+                      },
+                      {
+                          "type":  "action",
+                          "description":  "Fill in the password field with {{LOGIN_PASSWORD}}"
+                      },
+                      {
+                          "type":  "action",
+                          "description":  "Submit the login form"
+                      },
+                      {
+                          "type":  "assertion",
+                          "description":  "Verify the checkout experience is displayed"
+                      },
+                      {
+                          "type":  "assertion",
+                          "description":  "Verify the selected plan details are displayed"
+                      }
+                  ],
+        "priority":  "High"
+    },
+    {
+        "id":  "TC007",
+        "title":  "Select a plan from the landing page and reach checkout",
+        "description":  "A visitor can choose a subscription plan and billing cycle on the landing page and continue to checkout with the selected plan details.",
+        "category":  "Plan Selection",
+        "steps":  [
+                      {
+                          "type":  "action",
+                          "description":  "Navigate to /landing.html"
+                      },
+                      {
+                          "type":  "action",
+                          "description":  "Choose a plan and billing cycle"
+                      },
+                      {
+                          "type":  "action",
+                          "description":  "Continue to checkout"
+                      },
+                      {
+                          "type":  "assertion",
+                          "description":  "Verify the checkout experience is displayed"
+                      },
+                      {
+                          "type":  "assertion",
+                          "description":  "Verify the selected plan details are displayed"
+                      }
+                  ],
+        "priority":  "High"
+    },
+    {
+        "id":  "TC008",
+        "title":  "View purchase history on the account page",
+        "description":  "This verifies that a signed-in user can open the account page and see purchase history entries with plan, date, amount, currency, and status.",
+        "category":  "Purchase History",
+        "steps":  [
+                      {
+                          "type":  "action",
+                          "description":  "Navigate to /login.html"
+                      },
+                      {
+                          "type":  "action",
+                          "description":  "Fill in the email field with {{LOGIN_USER}}"
+                      },
+                      {
+                          "type":  "action",
+                          "description":  "Fill in the password field with {{LOGIN_PASSWORD}}"
+                      },
+                      {
+                          "type":  "action",
+                          "description":  "Submit the login form"
+                      },
+                      {
+                          "type":  "action",
+                          "description":  "Navigate to /account.html"
+                      },
+                      {
+                          "type":  "assertion",
+                          "description":  "Verify the purchase history list is displayed"
+                      },
+                      {
+                          "type":  "assertion",
+                          "description":  "Verify purchase entries are displayed with plan, date, amount, currency, and status"
+                      }
+                  ],
+        "priority":  "High"
+    },
+    {
+        "id":  "TC009",
+        "title":  "View account purchase history and status",
+        "description":  "A signed-in user can open the account page and see their purchase history with plan, date, amount, currency, and status details.",
+        "category":  "Account and Purchase History",
+        "steps":  [
+                      {
+                          "type":  "action",
+                          "description":  "Navigate to /login.html"
+                      },
+                      {
+                          "type":  "action",
+                          "description":  "Fill in the email field with {{LOGIN_USER}}"
+                      },
+                      {
+                          "type":  "action",
+                          "description":  "Fill in the password field with {{LOGIN_PASSWORD}}"
+                      },
+                      {
+                          "type":  "action",
+                          "description":  "Submit the login form"
+                      },
+                      {
+                          "type":  "action",
+                          "description":  "Navigate to /account.html"
+                      },
+                      {
+                          "type":  "assertion",
+                          "description":  "Verify purchase history is displayed"
+                      },
+                      {
+                          "type":  "assertion",
+                          "description":  "Verify purchase status details are displayed"
+                      }
+                  ],
+        "priority":  "High"
+    },
+    {
+        "id":  "TC010",
+        "title":  "Show existing purchases while reviewing checkout",
+        "description":  "This verifies that an authenticated user can view purchase history on checkout without leaving the page.",
+        "category":  "Purchase History",
+        "steps":  [
+                      {
+                          "type":  "action",
+                          "description":  "Navigate to /login.html"
+                      },
+                      {
+                          "type":  "action",
+                          "description":  "Fill in the email field with {{LOGIN_USER}}"
+                      },
+                      {
+                          "type":  "action",
+                          "description":  "Fill in the password field with {{LOGIN_PASSWORD}}"
+                      },
+                      {
+                          "type":  "action",
+                          "description":  "Submit the login form"
+                      },
+                      {
+                          "type":  "action",
+                          "description":  "Navigate to /checkout.html?plan=basic\u0026billing=on_6_months"
+                      },
+                      {
+                          "type":  "assertion",
+                          "description":  "Verify the purchase history section is displayed"
+                      },
+                      {
+                          "type":  "assertion",
+                          "description":  "Verify existing purchases are displayed"
+                      }
+                  ],
+        "priority":  "High"
+    },
+    {
+        "id":  "TC011",
+        "title":  "Complete signup from the standalone page",
+        "description":  "A visitor can create a new account with valid email and password and reach the signed-in account experience when signup succeeds without email confirmation.",
+        "category":  "User Signup",
+        "steps":  [
+                      {
+                          "type":  "action",
+                          "description":  "Navigate to /signup.html"
+                      },
+                      {
+                          "type":  "action",
+                          "description":  "Fill in the email field with a valid new email address"
+                      },
+                      {
+                          "type":  "action",
+                          "description":  "Fill in the password field with a valid password"
+                      },
+                      {
+                          "type":  "action",
+                          "description":  "Submit the signup form"
+                      },
+                      {
+                          "type":  "assertion",
+                          "description":  "Verify the signed-in account experience is displayed"
+                      }
+                  ],
+        "priority":  "High"
+    },
+    {
+        "id":  "TC012",
+        "title":  "Refresh purchase status after returning from checkout",
+        "description":  "A signed-in user can return to the account page after checkout and see updated purchase status information for the new session.",
+        "category":  "Account and Purchase History",
+        "steps":  [
+                      {
+                          "type":  "action",
+                          "description":  "Navigate to /login.html"
+                      },
+                      {
+                          "type":  "action",
+                          "description":  "Fill in the email field with {{LOGIN_USER}}"
+                      },
+                      {
+                          "type":  "action",
+                          "description":  "Fill in the password field with {{LOGIN_PASSWORD}}"
+                      },
+                      {
+                          "type":  "action",
+                          "description":  "Submit the login form"
+                      },
+                      {
+                          "type":  "action",
+                          "description":  "Navigate to /checkout.html?plan=basic\u0026billing=on_6_months"
+                      },
+                      {
+                          "type":  "action",
+                          "description":  "Continue through the payment form"
+                      },
+                      {
+                          "type":  "action",
+                          "description":  "Navigate to /account.html"
+                      },
+                      {
+                          "type":  "assertion",
+                          "description":  "Verify purchase status details are displayed"
+                      }
+                  ],
+        "priority":  "High"
+    },
+    {
+        "id":  "TC013",
+        "title":  "Log in from the standalone page",
+        "description":  "A returning user can sign in with email and password and reach the authenticated app experience.",
+        "category":  "User Login",
+        "steps":  [
+                      {
+                          "type":  "action",
+                          "description":  "Navigate to /login.html"
+                      },
+                      {
+                          "type":  "action",
+                          "description":  "Fill in the email field with {{LOGIN_USER}}"
+                      },
+                      {
+                          "type":  "action",
+                          "description":  "Fill in the password field with {{LOGIN_PASSWORD}}"
+                      },
+                      {
+                          "type":  "action",
+                          "description":  "Submit the login form"
+                      },
+                      {
+                          "type":  "assertion",
+                          "description":  "Verify the signed-in app experience is displayed"
+                      }
+                  ],
+        "priority":  "High"
+    },
+    {
+        "id":  "TC014",
+        "title":  "Review purchase history on checkout after signing in",
+        "description":  "An authenticated user can open checkout and see the payment form together with their existing purchase history.",
+        "category":  "Account and Purchase History",
+        "steps":  [
+                      {
+                          "type":  "action",
+                          "description":  "Navigate to /login.html"
+                      },
+                      {
+                          "type":  "action",
+                          "description":  "Fill in the email field with {{LOGIN_USER}}"
+                      },
+                      {
+                          "type":  "action",
+                          "description":  "Fill in the password field with {{LOGIN_PASSWORD}}"
+                      },
+                      {
+                          "type":  "action",
+                          "description":  "Submit the login form"
+                      },
+                      {
+                          "type":  "action",
+                          "description":  "Navigate to /checkout.html?plan=basic\u0026billing=on_6_months"
+                      },
+                      {
+                          "type":  "assertion",
+                          "description":  "Verify the payment form is displayed"
+                      },
+                      {
+                          "type":  "assertion",
+                          "description":  "Verify purchase history is displayed"
+                      }
+                  ],
+        "priority":  "High"
+    },
+    {
+        "id":  "TC015",
+        "title":  "Display selected plan details on checkout",
+        "description":  "This verifies that an authenticated user opening checkout for a selected plan sees the correct plan details before paying.",
+        "category":  "Plan Checkout",
+        "steps":  [
+                      {
+                          "type":  "action",
+                          "description":  "Navigate to /login.html"
+                      },
+                      {
+                          "type":  "action",
+                          "description":  "Fill in the email field with {{LOGIN_USER}}"
+                      },
+                      {
+                          "type":  "action",
+                          "description":  "Fill in the password field with {{LOGIN_PASSWORD}}"
+                      },
+                      {
+                          "type":  "action",
+                          "description":  "Submit the login form"
+                      },
+                      {
+                          "type":  "action",
+                          "description":  "Navigate to /checkout.html?plan=basic\u0026billing=on_6_months"
+                      },
+                      {
+                          "type":  "assertion",
+                          "description":  "Verify the selected plan details are displayed"
+                      },
+                      {
+                          "type":  "assertion",
+                          "description":  "Verify the payment form is displayed"
+                      }
+                  ],
+        "priority":  "Medium"
+    },
+    {
+        "id":  "TC016",
+        "title":  "Show an empty purchase history when no purchases exist",
+        "description":  "A signed-in user with no prior orders sees an empty purchase history state on the account page.",
+        "category":  "Account and Purchase History",
+        "steps":  [
+                      {
+                          "type":  "action",
+                          "description":  "Navigate to /login.html"
+                      },
+                      {
+                          "type":  "action",
+                          "description":  "Fill in the email field with {{LOGIN_USER}}"
+                      },
+                      {
+                          "type":  "action",
+                          "description":  "Fill in the password field with {{LOGIN_PASSWORD}}"
+                      },
+                      {
+                          "type":  "action",
+                          "description":  "Submit the login form"
+                      },
+                      {
+                          "type":  "action",
+                          "description":  "Navigate to /account.html"
+                      },
+                      {
+                          "type":  "assertion",
+                          "description":  "Verify an empty state message is visible"
+                      }
+                  ],
+        "priority":  "Medium"
+    },
+    {
+        "id":  "TC017",
+        "title":  "Show an empty purchase history on account",
+        "description":  "This verifies that a signed-in user with no purchases sees an empty state on the account page.",
+        "category":  "Purchase History",
+        "steps":  [
+                      {
+                          "type":  "action",
+                          "description":  "Navigate to /login.html"
+                      },
+                      {
+                          "type":  "action",
+                          "description":  "Fill in the email field with {{LOGIN_USER}}"
+                      },
+                      {
+                          "type":  "action",
+                          "description":  "Fill in the password field with {{LOGIN_PASSWORD}}"
+                      },
+                      {
+                          "type":  "action",
+                          "description":  "Submit the login form"
+                      },
+                      {
+                          "type":  "action",
+                          "description":  "Navigate to /account.html"
+                      },
+                      {
+                          "type":  "assertion",
+                          "description":  "Verify an empty state message is visible"
+                      }
+                  ],
+        "priority":  "Medium"
+    },
+    {
+        "id":  "TC018",
+        "title":  "Show invalid login feedback from the landing modal",
+        "description":  "A visitor sees an invalid credentials message when submitting the embedded login modal with incorrect email or password.",
+        "category":  "User Login",
+        "steps":  [
+                      {
+                          "type":  "action",
+                          "description":  "Navigate to /landing.html"
+                      },
+                      {
+                          "type":  "action",
+                          "description":  "Open the login modal"
+                      },
+                      {
+                          "type":  "action",
+                          "description":  "Fill in the email field with an invalid email address"
+                      },
+                      {
+                          "type":  "action",
+                          "description":  "Fill in the password field with an incorrect password"
+                      },
+                      {
+                          "type":  "action",
+                          "description":  "Submit the login form"
+                      },
+                      {
+                          "type":  "assertion",
+                          "description":  "Verify an invalid credentials error is visible"
+                      }
+                  ],
+        "priority":  "Medium"
+    },
+    {
+        "id":  "TC019",
+        "title":  "Show signup validation for bad input",
+        "description":  "A visitor sees inline validation when the signup form is submitted with an invalid email address or a too-short password.",
+        "category":  "User Signup",
+        "steps":  [
+                      {
+                          "type":  "action",
+                          "description":  "Navigate to /signup.html"
+                      },
+                      {
+                          "type":  "action",
+                          "description":  "Fill in the email field with an invalid email address"
+                      },
+                      {
+                          "type":  "action",
+                          "description":  "Fill in the password field with a too-short password"
+                      },
+                      {
+                          "type":  "action",
+                          "description":  "Submit the signup form"
+                      },
+                      {
+                          "type":  "assertion",
+                          "description":  "Verify a validation error is visible"
+                      },
+                      {
+                          "type":  "assertion",
+                          "description":  "Verify the account experience is not displayed"
+                      }
+                  ],
+        "priority":  "Medium"
+    },
+    {
+        "id":  "TC020",
+        "title":  "Show validation when payment details are incomplete",
+        "description":  "This verifies that an authenticated user sees a payment validation error when required checkout details are left incomplete.",
+        "category":  "Plan Checkout",
+        "steps":  [
+                      {
+                          "type":  "action",
+                          "description":  "Navigate to /login.html"
+                      },
+                      {
+                          "type":  "action",
+                          "description":  "Fill in the email field with {{LOGIN_USER}}"
+                      },
+                      {
+                          "type":  "action",
+                          "description":  "Fill in the password field with {{LOGIN_PASSWORD}}"
+                      },
+                      {
+                          "type":  "action",
+                          "description":  "Submit the login form"
+                      },
+                      {
+                          "type":  "action",
+                          "description":  "Navigate to /checkout.html?plan=pro\u0026billing=forever"
+                      },
+                      {
+                          "type":  "action",
+                          "description":  "Enter a cardholder name"
+                      },
+                      {
+                          "type":  "action",
+                          "description":  "Submit the payment form"
+                      },
+                      {
+                          "type":  "assertion",
+                          "description":  "Verify a payment validation error is visible"
+                      }
+                  ],
+        "priority":  "Medium"
+    },
+    {
+        "id":  "TC021",
+        "title":  "Sign up through Google from the standalone page",
+        "description":  "A visitor can choose the Google sign-in option and return to the app as a signed-in user after completing the external OAuth flow.",
+        "category":  "User Signup",
+        "steps":  [
+                      {
+                          "type":  "action",
+                          "description":  "Navigate to /signup.html"
+                      },
+                      {
+                          "type":  "action",
+                          "description":  "Choose the Google sign-in option"
+                      },
+                      {
+                          "type":  "assertion",
+                          "description":  "Verify the external sign-in flow is initiated"
+                      }
+                  ],
+        "priority":  "Medium"
+    },
+    {
+        "id":  "TC022",
+        "title":  "Prevent checkout when the selected plan is missing",
+        "description":  "This verifies that an authenticated user cannot proceed on checkout when the plan selection is absent or invalid and an inline validation message is shown.",
+        "category":  "Plan Checkout",
+        "steps":  [
+                      {
+                          "type":  "action",
+                          "description":  "Navigate to /login.html"
+                      },
+                      {
+                          "type":  "action",
+                          "description":  "Fill in the email field with {{LOGIN_USER}}"
+                      },
+                      {
+                          "type":  "action",
+                          "description":  "Fill in the password field with {{LOGIN_PASSWORD}}"
+                      },
+                      {
+                          "type":  "action",
+                          "description":  "Submit the login form"
+                      },
+                      {
+                          "type":  "action",
+                          "description":  "Navigate to /checkout.html"
+                      },
+                      {
+                          "type":  "assertion",
+                          "description":  "Verify a plan validation error is visible"
+                      }
+                  ],
+        "priority":  "Low"
+    }
+]

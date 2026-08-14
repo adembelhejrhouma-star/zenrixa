@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Scroll Animation</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  background: #000;
+  overflow-x: hidden;
+}
+#wrapper {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+}
+canvas {
+  display: block;
+  width: 100vw;
+  height: 100vh;
+}
+#spacer {
+  position: relative;
+  pointer-events: none;
+  z-index: 0;
+}
+</style>
+</head>
+<body>
+
+<div id="wrapper">
+  <canvas id="c"></canvas>
+</div>
+<div id="spacer"></div>
+
+<script>
+const canvas = document.getElementById('c');
+const ctx = canvas.getContext('2d');
+const spacer = document.getElementById('spacer');
+
+const frameFiles = [
+  "ezgif-frame-001.jpg","ezgif-frame-002.jpg","ezgif-frame-003.jpg","ezgif-frame-004.jpg","ezgif-frame-005.jpg","ezgif-frame-006.jpg","ezgif-frame-007.jpg","ezgif-frame-008.jpg","ezgif-frame-009.jpg","ezgif-frame-010.jpg",
+  "ezgif-frame-011.jpg","ezgif-frame-023.jpg","ezgif-frame-024.jpg","ezgif-frame-025.jpg","ezgif-frame-026.jpg","ezgif-frame-027.jpg","ezgif-frame-028.jpg","ezgif-frame-029.jpg","ezgif-frame-030.jpg","ezgif-frame-031.jpg",
+  "ezgif-frame-032.jpg","ezgif-frame-033.jpg","ezgif-frame-056.jpg","ezgif-frame-057.jpg","ezgif-frame-058.jpg","ezgif-frame-059.jpg","ezgif-frame-060.jpg","ezgif-frame-061.jpg","ezgif-frame-062.jpg","ezgif-frame-063.jpg",
+  "ezgif-frame-064.jpg","ezgif-frame-065.jpg","ezgif-frame-066.jpg","ezgif-frame-067.jpg","ezgif-frame-068.jpg","ezgif-frame-069.jpg","ezgif-frame-070.jpg","ezgif-frame-071.jpg","ezgif-frame-072.jpg","ezgif-frame-073.jpg",
+  "ezgif-frame-074.jpg","ezgif-frame-075.jpg","ezgif-frame-076.jpg","ezgif-frame-077.jpg","ezgif-frame-078.jpg","ezgif-frame-079.jpg","ezgif-frame-080.jpg","ezgif-frame-081.jpg","ezgif-frame-082.jpg","ezgif-frame-083.jpg",
+  "ezgif-frame-084.jpg","ezgif-frame-085.jpg","ezgif-frame-086.jpg","ezgif-frame-087.jpg","ezgif-frame-088.jpg","ezgif-frame-089.jpg","ezgif-frame-090.jpg","ezgif-frame-091.jpg","ezgif-frame-092.jpg","ezgif-frame-093.jpg",
+  "ezgif-frame-094.jpg","ezgif-frame-095.jpg","ezgif-frame-096.jpg","ezgif-frame-097.jpg","ezgif-frame-098.jpg","ezgif-frame-099.jpg","ezgif-frame-100.jpg","ezgif-frame-101.jpg","ezgif-frame-102.jpg","ezgif-frame-103.jpg",
+  "ezgif-frame-104.jpg","ezgif-frame-105.jpg","ezgif-frame-106.jpg","ezgif-frame-107.jpg","ezgif-frame-108.jpg","ezgif-frame-109.jpg","ezgif-frame-110.jpg","ezgif-frame-111.jpg","ezgif-frame-112.jpg","ezgif-frame-113.jpg",
+  "ezgif-frame-114.jpg","ezgif-frame-115.jpg","ezgif-frame-116.jpg","ezgif-frame-117.jpg","ezgif-frame-118.jpg","ezgif-frame-119.jpg","ezgif-frame-120.jpg"
+];
+
+const totalFrames = frameFiles.length;
+const images = [];
+let loaded = 0;
+let ready = false;
+
+function preload() {
+  for (let i = 0; i < totalFrames; i++) {
+    const img = new Image();
+    img.src = frameFiles[i];
+    img.onload = () => {
+      loaded++;
+      if (loaded === 1) {
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+        spacer.style.height = '500vh';
+        window.addEventListener('scroll', onScroll);
+        updateFrame();
+        document.documentElement.style.scrollBehavior = 'smooth';
+      }
+      if (loaded === totalFrames) {
+        ready = true;
+        updateFrame();
+      }
+    };
+    img.onerror = () => {
+      loaded++;
+      if (loaded === totalFrames) {
+        ready = true;
+        updateFrame();
+      }
+    };
+    images.push(img);
+  }
+}
+
+function render(idx) {
+  if (!ready) return;
+  const clamped = Math.max(0, Math.min(Math.round(idx), totalFrames - 1));
+  const img = images[clamped];
+  if (!img || !img.complete) return;
+
+  const cw = canvas.width;
+  const ch = canvas.height;
+  const ratio = 16 / 9;
+
+  let dw, dh, dx, dy;
+  if (cw / ch > ratio) {
+    dh = ch;
+    dw = ch * ratio;
+    dx = (cw - dw) / 2;
+    dy = 0;
+  } else {
+    dw = cw;
+    dh = cw / ratio;
+    dx = 0;
+    dy = (ch - dh) / 2;
+  }
+
+  ctx.fillStyle = '#000';
+  ctx.fillRect(0, 0, cw, ch);
+  ctx.drawImage(img, dx, dy, dw, dh);
+}
+
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  updateFrame();
+}
+
+let lastFrame = -1;
+const scrollHeight = 500;
+
+function onScroll() {
+  if (!ready) return;
+  const scrollTop = window.scrollY;
+  const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+  const progress = maxScroll > 0 ? scrollTop / maxScroll : 0;
+  const frameIdx = Math.round(progress * (totalFrames - 1));
+  if (frameIdx !== lastFrame) {
+    lastFrame = frameIdx;
+    render(frameIdx);
+  }
+}
+
+function updateFrame() {
+  onScroll();
+}
+
+preload();
+</script>
+</body>
+</html>

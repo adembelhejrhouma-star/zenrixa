@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Checkout - Zenrixa</title>
+<script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+<script src="https://js.stripe.com/v3/"></script>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: #000;
+  color: #fff;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24px 48px;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+.brand { display: flex; align-items: center; gap: 12px; cursor: pointer; }
+.brand-icon { width: 32px; height: 32px; border-radius: 8px; background: #fff; display: flex; align-items: center; justify-content: center; padding: 6px; }
+.brand-icon svg { width: 100%; height: 100%; color: #0b0b0c; }
+.brand-name { font-weight: 800; font-size: 20px; letter-spacing: -0.02em; }
+.header-right { display: flex; align-items: center; gap: 16px; }
+.email-display { font-size: 13px; color: #a1a1aa; }
+.btn {
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  border: none;
+  transition: background 0.2s;
+}
+.btn-logout { border: 1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.05); color: #fff; }
+.btn-logout:hover { background: rgba(255,255,255,0.1); }
+.btn-back {
+  width: 40px; height: 40px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.3);
+  background: rgba(255,255,255,0.08); color: #fff; cursor: pointer; display: flex;
+  align-items: center; justify-content: center; transition: all 0.2s;
+  font-size: 20px; line-height: 1; padding: 0;
+}
+.btn-back:hover { background: rgba(255,255,255,0.2); border-color: #fff; }
+
+.container { max-width: 640px; margin: 0 auto; padding: 48px 24px; flex: 1; width: 100%; }
+h1 { font-size: 28px; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 8px; }
+.sub { color: #a1a1aa; font-size: 14px; margin-bottom: 32px; }
+.plan-card {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 16px;
+  padding: 28px;
+  margin-bottom: 24px;
+}
+.plan-name { font-size: 12px; color: #a1a1aa; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600; margin-bottom: 8px; }
+.plan-price { font-size: 40px; font-weight: 700; letter-spacing: -0.02em; }
+.plan-price span { font-size: 16px; font-weight: 400; color: #a1a1aa; margin-left: 4px; }
+.plan-desc { color: #a1a1aa; font-size: 14px; margin-top: 8px; line-height: 1.6; }
+.divider { border: none; border-top: 1px solid rgba(255,255,255,0.06); margin: 20px 0; }
+.features { list-style: none; display: flex; flex-direction: column; gap: 12px; }
+.features li { display: flex; align-items: center; gap: 10px; font-size: 13px; color: #d4d4d8; }
+.features li svg { width: 16px; height: 16px; color: #22d3ee; flex-shrink: 0; }
+
+.alert { padding: 12px 14px; border-radius: 8px; font-size: 13px; margin-bottom: 16px; display: none; }
+.alert.error { display: block; background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.3); color: #fca5a5; }
+
+/* ---- Payment card (Stripe Checkout inspired) ---- */
+.payment-card {
+  background: #ffffff;
+  color: #0f172a;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  padding: 28px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.25);
+}
+.payment-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+.payment-title {
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+.payment-icons { display: flex; align-items: center; gap: 6px; opacity: 0.8; }
+
+.field { margin-bottom: 20px; }
+.field-label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 6px;
+}
+
+.input {
+  width: 100%;
+  padding: 11px 14px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 15px;
+  font-family: inherit;
+  color: #0f172a;
+  background: #fff;
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.input::placeholder { color: #9ca3af; }
+.input:focus { border-color: #2563eb; box-shadow: 0 0 0 1px #2563eb; }
+.input-error { border-color: #ef4444; }
+.input-error:focus { border-color: #ef4444; box-shadow: 0 0 0 1px #ef4444; }
+
+.card-field {
+  position: relative;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  background: #fff;
+  padding: 11px 14px;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.card-field:focus-within { border-color: #2563eb; box-shadow: 0 0 0 1px #2563eb; }
+.card-field-error { border-color: #ef4444; }
+.card-field-error:focus-within { border-color: #ef4444; box-shadow: 0 0 0 1px #ef4444; }
+.card-logo {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  pointer-events: none;
+  transition: opacity 0.15s;
+}
+.card-field:focus-within .card-logo { opacity: 0; }
+
+.select-wrap { position: relative; }
+.select-wrap select {
+  appearance: none;
+  -webkit-appearance: none;
+  padding-right: 36px;
+  cursor: pointer;
+  background: #fff;
+}
+.select-arrow {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  display: flex;
+  color: #6b7280;
+}
+
+.save-check {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 13px;
+  color: #374151;
+  margin: 22px 0;
+  cursor: pointer;
+  user-select: none;
+}
+.save-check input {
+  width: 16px;
+  height: 16px;
+  margin-top: 1px;
+  accent-color: #2563eb;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.pay-btn {
+  width: 100%;
+  padding: 14px 24px;
+  border-radius: 6px;
+  background: #2563eb;
+  color: #fff;
+  font-size: 15px;
+  font-weight: 700;
+  font-family: inherit;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  transition: background 0.15s, opacity 0.15s;
+  box-shadow: 0 4px 14px rgba(37,99,235,0.3);
+}
+.pay-btn:hover { background: #1d4ed8; }
+.pay-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+.pay-btn svg { width: 18px; height: 18px; }
+.spinner {
+  width: 16px; height: 16px;
+  border: 2px solid rgba(255,255,255,0.4);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  display: none;
+}
+.pay-btn.loading .spinner { display: inline-block; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.security { display: flex; align-items: center; justify-content: center; gap: 24px; margin-top: 24px; color: #52525b; font-size: 12px; }
+.security svg { width: 16px; height: 16px; color: #71717a; }
+.loading { text-align: center; padding: 48px; color: #737373; }
+
+.history-card {
+  margin-top: 32px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 16px;
+  padding: 28px;
+}
+.history-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+.history-title { font-size: 18px; font-weight: 700; letter-spacing: -0.01em; }
+.history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+.history-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px;
+  background: rgba(255,255,255,0.02);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 12px;
+}
+.history-item-left { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.history-plan { font-size: 15px; font-weight: 600; }
+.history-meta { font-size: 12px; color: #737373; }
+.history-right { text-align: right; flex-shrink: 0; }
+.history-amount { font-size: 16px; font-weight: 700; }
+.history-empty { text-align: center; padding: 32px; color: #737373; font-size: 14px; }
+.history-back-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 14px 24px;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.15);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s;
+}
+.history-back-btn:hover { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.3); }
+.history-back-btn svg { width: 16px; height: 16px; }
+</style>
+</head>
+<body>
+<header>
+  <div class="brand" onclick="window.location.href='landing.html'">
+    <div class="brand-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+        <path d="M4 4h16v3L8 17h12v3H4v-3l12-10H4V4z" />
+      </svg>
+    </div>
+    <span class="brand-name">Zenrixa</span>
+  </div>
+  <div class="header-right">
+    <span class="email-display" id="user-email"></span>
+    <button class="btn btn-back" onclick="window.location.href='landing.html'" title="Back to home">&#8592;</button>
+  </div>
+</header>
+<div class="container">
+  <div id="loading" class="loading">Loading...</div>
+  <div id="checkout-content" style="display:none;">
+    <h1>Complete Purchase</h1>
+    <p class="sub">You're about to buy your VR glasses plan.</p>
+    <div id="alert" class="alert"></div>
+    <div class="plan-card" id="plan-card"></div>
+
+    <div class="payment-card">
+      <div class="payment-header">
+        <h2 class="payment-title">Payment method</h2>
+        <div class="payment-icons">
+          <svg viewBox="0 0 750 471" width="34" height="21" aria-hidden="true">
+            <path fill="#1A1F71" d="M256.5 318.4h-37.5l24.3-126.3h37.4l-24.2 126.3zm-151.3-74.2l-7.2-34.2c-4.4-14.3-14.8-19.8-28.6-26-8.1-3.7-16.4-7.7-16.4-12.9 0-7.3 7.6-9.6 14.7-9.6 12.1.3 20.9 2.5 29.5 5.5l4.1 1.7 5-27.1c-8.6-3.1-19.5-4.2-29.9-4.2-27.9 0-47.3 14.5-47.5 34.8-.2 15.1 13.7 23.4 24.3 28.5 10.9 5.1 14.7 8.4 14.7 13.2 0 7.1-8.8 10.2-17 10.2-11.6 0-17.9-1.9-27.6-6.2l-4.8-2.3-5.2 26.9c7.2 3.1 18.6 5.1 30.9 5.2 28.8 0 48.3-14.2 48.7-36.2zm162.6 12.2c0-20.1-13.2-25.8-26.9-31.1-11.7-4.5-17.8-7.7-17.8-13.6 0-6.1 7.2-10.2 13.9-10.2 9.5 0 17.5 3.2 23.3 6.8l3.4 1.9 6.1-27.6c-8.6-3.6-16.8-5.8-27.1-5.8-26.2 0-44.1 15.2-44.2 36.9-.1 16.5 13.8 25.2 26.7 30.2 11.7 4.6 15.9 7.9 15.9 13.6 0 6.4-6.6 10.2-15.5 10.2-10.3 0-18.9-3.3-26.1-8.2l-4-2.4-6.2 27.9c7.8 4 18.9 6.7 31 6.9 27.1 0 45.6-15.1 45.9-37.4zm230.2 25.2h31.9l-26.3-126.3h-30.1c-5.1 0-9.6 2.7-11.3 7.3l-39.8 119h29.9l7.3-20.5h38.9l6.7 20.5zm-41.1-47.4l13.1-36.7 7.6 36.7h-20.7zm-179.5 0c4.8 0 9.5 1.9 12.8 5.3l-1.3-5.3h-29.6c-7 0-13.6 4.5-15.2 11.2l-1.7 6.2-1.6 5.7c-1.1 4.4 1.8 8.1 6.3 8.1 6.8 0 12.3-5.1 13.5-11.8.4-2.1 2.3-3.5 4.4-3.5h7.1c1.7 0 3.2.6 4.3 1.6-3.2 3.7-7.8 6.1-12.8 6.1-8.9 0-16.2-6.6-16.2-15.8 0-4.2 1.6-8.2 4.5-11.2 2.9-3.1 6.8-4.7 11-4.7h5.7zm34.4-47.5c0 0 5-4.3 12.2 3.1 0 0 8.9 11.1 23 20.1 0 0-1.4 3.5-3.1 5.7-4.4-2.4-12.2-7.7-25.8-13-2.2 6.2-4.6 13.2-4.6 13.2h-31.4l19.9-29.1h-25.6l22.6-55.9h29.1l-16.3 43.2-15.3-17.4c5.8-3.7 13.8-6.6 19.3-6.6 5.7 0 16.3 3.3 16.3 3.3z"/>
+          </svg>
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="field-label" for="card-number">Card information</label>
+        <div class="card-field" id="card-field">
+          <div id="card-number"></div>
+          <span class="card-logo">
+            <svg viewBox="0 0 750 471" width="32" height="20" aria-hidden="true">
+              <path fill="#1A1F71" d="M256.5 318.4h-37.5l24.3-126.3h37.4l-24.2 126.3zm-151.3-74.2l-7.2-34.2c-4.4-14.3-14.8-19.8-28.6-26-8.1-3.7-16.4-7.7-16.4-12.9 0-7.3 7.6-9.6 14.7-9.6 12.1.3 20.9 2.5 29.5 5.5l4.1 1.7 5-27.1c-8.6-3.1-19.5-4.2-29.9-4.2-27.9 0-47.3 14.5-47.5 34.8-.2 15.1 13.7 23.4 24.3 28.5 10.9 5.1 14.7 8.4 14.7 13.2 0 7.1-8.8 10.2-17 10.2-11.6 0-17.9-1.9-27.6-6.2l-4.8-2.3-5.2 26.9c7.2 3.1 18.6 5.1 30.9 5.2 28.8 0 48.3-14.2 48.7-36.2zm162.6 12.2c0-20.1-13.2-25.8-26.9-31.1-11.7-4.5-17.8-7.7-17.8-13.6 0-6.1 7.2-10.2 13.9-10.2 9.5 0 17.5 3.2 23.3 6.8l3.4 1.9 6.1-27.6c-8.6-3.6-16.8-5.8-27.1-5.8-26.2 0-44.1 15.2-44.2 36.9-.1 16.5 13.8 25.2 26.7 30.2 11.7 4.6 15.9 7.9 15.9 13.6 0 6.4-6.6 10.2-15.5 10.2-10.3 0-18.9-3.3-26.1-8.2l-4-2.4-6.2 27.9c7.8 4 18.9 6.7 31 6.9 27.1 0 45.6-15.1 45.9-37.4zm230.2 25.2h31.9l-26.3-126.3h-30.1c-5.1 0-9.6 2.7-11.3 7.3l-39.8 119h29.9l7.3-20.5h38.9l6.7 20.5zm-41.1-47.4l13.1-36.7 7.6 36.7h-20.7zm-179.5 0c4.8 0 9.5 1.9 12.8 5.3l-1.3-5.3h-29.6c-7 0-13.6 4.5-15.2 11.2l-1.7 6.2-1.6 5.7c-1.1 4.4 1.8 8.1 6.3 8.1 6.8 0 12.3-5.1 13.5-11.8.4-2.1 2.3-3.5 4.4-3.5h7.1c1.7 0 3.2.6 4.3 1.6-3.2 3.7-7.8 6.1-12.8 6.1-8.9 0-16.2-6.6-16.2-15.8 0-4.2 1.6-8.2 4.5-11.2 2.9-3.1 6.8-4.7 11-4.7h5.7zm34.4-47.5c0 0 5-4.3 12.2 3.1 0 0 8.9 11.1 23 20.1 0 0-1.4 3.5-3.1 5.7-4.4-2.4-12.2-7.7-25.8-13-2.2 6.2-4.6 13.2-4.6 13.2h-31.4l19.9-29.1h-25.6l22.6-55.9h29.1l-16.3 43.2-15.3-17.4c5.8-3.7 13.8-6.6 19.3-6.6 5.7 0 16.3 3.3 16.3 3.3z"/>
+            </svg>
+          </span>
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="field-label" for="card-name">Cardholder name</label>
+        <input type="text" id="card-name" class="input" placeholder="Full name on card" autocomplete="cc-name" />
+      </div>
+
+      <div class="field">
+        <label class="field-label" for="country">Country or region</label>
+        <div class="select-wrap">
+          <select id="country" class="input select">
+            <option value="">Country or region</option>
+            <option value="US">United States</option>
+            <option value="GB">United Kingdom</option>
+            <option value="CA">Canada</option>
+            <option value="AU">Australia</option>
+            <option value="DE">Germany</option>
+            <option value="FR">France</option>
+            <option value="IT">Italy</option>
+            <option value="ES">Spain</option>
+            <option value="NL">Netherlands</option>
+            <option value="BE">Belgium</option>
+            <option value="CH">Switzerland</option>
+            <option value="SE">Sweden</option>
+            <option value="NO">Norway</option>
+            <option value="DK">Denmark</option>
+            <option value="FI">Finland</option>
+            <option value="IE">Ireland</option>
+            <option value="PT">Portugal</option>
+            <option value="AT">Austria</option>
+            <option value="JP">Japan</option>
+            <option value="AE">United Arab Emirates</option>
+            <option value="IN">India</option>
+            <option value="SG">Singapore</option>
+            <option value="BR">Brazil</option>
+            <option value="MX">Mexico</option>
+          </select>
+          <span class="select-arrow">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+          </span>
+        </div>
+      </div>
+
+      <label class="save-check">
+        <input type="checkbox" id="save-info" />
+        <span>Save my information for faster checkout</span>
+      </label>
+
+      <button class="pay-btn" id="pay-btn" onclick="handlePayment()">
+        <span class="spinner"></span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        <span id="pay-label">Pay</span>
+      </button>
+    </div>
+
+    <div class="security">
+      <span>SECURE 256-BIT</span>
+      <span>FULLY REFUNDABLE</span>
+    </div>
+
+    <div class="history-card">
+      <div class="history-header">
+        <h2 class="history-title">Purchase History</h2>
+      </div>
+      <div id="history-list" class="history-list">
+        <div class="loading" id="history-loading">Loading your purchases...</div>
+      </div>
+      <button class="history-back-btn" onclick="returnToDashboard()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h18M12 5l7 7-7 7"/></svg>
+        Return to Dashboard
+      </button>
+    </div>
+  </div>
+</div>
+<script src="js/env.js?v=3"></script>
+<script src="js/supabase-config.js?v=3"></script>
+<script src="js/auth.js?v=3"></script>
+<script src="js/purchase-handler.js?v=3"></script>
+<script src="js/stripe.js?v=3"></script>
+<script>
+const planData = {
+  basic: { name: 'Basic', on_6_months: 20, forever: 80, desc: 'For creators taking their first steps with Forma.' },
+  standard: { name: 'Standard', on_6_months: 40, forever: 160, desc: 'For freelancers and small teams who need more freedom.' },
+  pro: { name: 'Pro', on_6_months: 100, forever: 400, desc: 'For studios, agencies, and professional creators.' }
+};
+
+let stripe, cardElement, _clientSecret, _mode;
+
+const cardStyle = {
+  base: {
+    fontSize: '15px',
+    color: '#0f172a',
+    fontFamily: "'DM Sans', sans-serif",
+    '::placeholder': { color: '#9ca3af' },
+    iconColor: '#94a3b8',
+  },
+  invalid: { color: '#ef4444', iconColor: '#ef4444' }
+};
+
+async function loadCheckout() {
+  const user = await getCurrentUser();
+  if (!user) {
+    const qs = new URLSearchParams(window.location.search).toString();
+    window.location.href = 'login.html' + (qs ? '?' + qs : '');
+    return;
+  }
+  document.getElementById('user-email').textContent = user.email;
+
+  const params = new URLSearchParams(window.location.search);
+  const planId = params.get('plan');
+  const billing = normalizeBillingCycle(params.get('billing'));
+  const plan = planId && planData[planId];
+
+  document.getElementById('loading').style.display = 'none';
+  document.getElementById('checkout-content').style.display = 'block';
+
+  if (!plan) {
+    window._checkout = null;
+    setError('Please select a plan to continue.');
+    document.getElementById('plan-card').innerHTML = '<div class="plan-desc">No plan selected.</div>';
+    document.getElementById('pay-btn').disabled = true;
+    return;
+  }
+
+  const price = billing === 'forever' ? plan.forever : plan.on_6_months;
+
+  const features = {
+    basic: ['3 projects', '1080p export', 'Basic editing tools', 'Free templates', 'Web & mobile access'],
+    standard: ['50 projects', '4K export', 'Advanced toolkit', '5 team members', 'Premium templates'],
+    pro: ['Unlimited projects', '8K + animations', 'AI-powered tools', 'Unlimited team', 'Brand customization']
+  };
+
+  document.getElementById('plan-card').innerHTML = `
+    <div class="plan-name">${plan.name}</div>
+    <div class="plan-price">$${price}<span>${billing === 'forever' ? 'one-time' : 'every 6 months'}</span></div>
+    <div class="plan-desc">${plan.desc}</div>
+    <hr class="divider" />
+    <ul class="features">
+      ${features[planId].map(f => `<li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>${f}</li>`).join('')}
+    </ul>
+  `;
+
+  window._checkout = { planId, billing, price };
+  initPayment().catch((err) => {
+    setError(err.message);
+  });
+}
+
+async function initPayment() {
+  stripe = Stripe(STRIPE_PUBLISHABLE_KEY);
+  const intent = await createPaymentIntent(window._checkout.planId, window._checkout.billing);
+  if (!intent || typeof intent.clientSecret !== 'string' || !intent.clientSecret.includes('_secret_')) {
+    throw new Error('create-payment-intent did not return a valid clientSecret');
+  }
+  _clientSecret = intent.clientSecret;
+  _mode = intent.mode;
+  const elements = stripe.elements();
+  cardElement = elements.create('card', { style: cardStyle });
+  cardElement.mount('#card-number');
+  cardElement.on('change', (event) => {
+    if (event.error) {
+      setError(event.error.message);
+    } else {
+      clearError();
+    }
+  });
+}
+
+function setError(message) {
+  const el = document.getElementById('alert');
+  el.className = 'alert error';
+  el.textContent = message;
+}
+
+function clearError() {
+  const el = document.getElementById('alert');
+  el.className = 'alert';
+  el.textContent = '';
+}
+
+function setLoading(loading) {
+  const btn = document.getElementById('pay-btn');
+  btn.disabled = loading;
+  btn.classList.toggle('loading', loading);
+  document.getElementById('pay-label').textContent = loading ? 'Processing…' : 'Pay';
+}
+
+async function handlePayment() {
+  if (!window._checkout || !window._checkout.planId) {
+    setError('Please select a plan to continue.');
+    return;
+  }
+  const nameEl = document.getElementById('card-name');
+  const countryEl = document.getElementById('country');
+  const name = nameEl.value.trim();
+  const country = countryEl.value;
+
+  if (!name) { setError('Please enter the full name on the card.'); nameEl.focus(); return; }
+  if (!country) { setError('Please select your country or region.'); countryEl.focus(); return; }
+
+  const save = document.getElementById('save-info').checked;
+  setLoading(true);
+
+  try {
+    if (_mode === 'payment') {
+      const { error } = await stripe.confirmCardPayment(_clientSecret, {
+        payment_method: {
+          card: cardElement,
+          billing_details: { name, address: { country } }
+        },
+        save_payment_method: save,
+      });
+      if (error) throw error;
+    } else {
+      const { setupIntent, error } = await stripe.confirmCardSetup(_clientSecret, {
+        payment_method: {
+          card: cardElement,
+          billing_details: { name, address: { country } }
+        }
+      });
+      if (error) throw error;
+      await createSubscription(window._checkout.planId, window._checkout.billing, setupIntent.payment_method);
+    }
+    window.location.href = 'account.html';
+  } catch (err) {
+    setError(err.message);
+    setLoading(false);
+  }
+}
+
+async function loadPurchaseHistory() {
+  const user = await getCurrentUser();
+  if (!user) return;
+  const list = document.getElementById('history-list');
+  const loading = document.getElementById('history-loading');
+  try {
+    const purchases = await getUserPurchases(user.id);
+    loading.style.display = 'none';
+    if (!purchases || purchases.length === 0) {
+      list.innerHTML = '<div class="history-empty">No purchases yet. Your bought plans will appear here.</div>';
+      return;
+    }
+    list.innerHTML = purchases.map(p => {
+      const cycleLabel = { on_6_months: 'Every 6 months', forever: 'One-time' }[p.billing_cycle] || p.billing_cycle || 'One-time';
+      const date = new Date(p.created_at).toLocaleDateString('en-US', {
+        year: 'numeric', month: 'long', day: 'numeric'
+      });
+      const status = p.status || 'pending';
+      return `<div class="history-item">
+        <div class="history-item-left">
+          <span class="history-plan">${p.plan_name}</span>
+          <span class="history-meta">${cycleLabel} &middot; ${date}</span>
+        </div>
+        <div class="history-right">
+          <div class="history-amount">$${p.amount}</div>
+          <div class="purchase-status" style="font-size:11px;text-transform:uppercase;letter-spacing:0.05em;margin-top:4px;color:${status === 'active' ? '#22d3ee' : status === 'pending' ? '#f59e0b' : '#ef4444'};">${status}</div>
+        </div>
+      </div>`;
+    }).join('');
+  } catch (err) {
+    loading.style.display = 'none';
+    list.innerHTML = `<div class="history-empty">Failed to load purchase history: ${err.message}</div>`;
+  }
+}
+
+function returnToDashboard() {
+  window.location.href = 'account.html';
+}
+
+loadCheckout();
+loadPurchaseHistory();
+</script>
+</body>
+</html>

@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sign Up - Zenrixa</title>
+<script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: #000;
+  color: #fff;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.container {
+  width: 100%;
+  max-width: 420px;
+  padding: 48px 24px;
+}
+h1 {
+  font-size: 32px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin-bottom: 8px;
+}
+.sub {
+  color: #a1a1aa;
+  font-size: 14px;
+  margin-bottom: 32px;
+}
+.form-group {
+  margin-bottom: 20px;
+}
+label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: #a1a1aa;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 8px;
+}
+input {
+  width: 100%;
+  background: rgba(0,0,0,0.4);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 12px;
+  padding: 12px 16px;
+  font-size: 14px;
+  color: #fff;
+  outline: none;
+  transition: border-color 0.2s;
+  box-sizing: border-box;
+}
+input:focus { border-color: #06b6d4; }
+input::placeholder { color: #52525b; }
+.btn {
+  width: 100%;
+  padding: 14px 24px;
+  border-radius: 12px;
+  background: #06b6d4;
+  color: #09090b;
+  font-size: 14px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s;
+  box-shadow: 0 4px 15px rgba(6,182,212,0.15);
+}
+.btn:hover { background: #22d3ee; }
+.btn-google {
+  width: 100%;
+  padding: 12px 24px;
+  border-radius: 12px;
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.15);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  transition: background 0.2s;
+}
+.btn-google:hover { background: rgba(255,255,255,0.05); }
+.divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 16px 0;
+}
+.divider-line { flex: 1; height: 1px; background: rgba(255,255,255,0.1); }
+.divider-text { font-size: 11px; color: #737373; text-transform: uppercase; letter-spacing: 0.05em; }
+.msg {
+  padding: 12px;
+  border-radius: 8px;
+  font-size: 13px;
+  margin-bottom: 16px;
+  display: none;
+}
+.msg.error { display: block; background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.3); color: #fca5a5; }
+.msg.success { display: block; background: rgba(34,197,94,0.1); border: 1px solid rgba(34,197,94,0.3); color: #86efac; }
+.footer { margin-top: 24px; text-align: center; font-size: 13px; color: #737373; }
+.footer a { color: #06b6d4; text-decoration: none; }
+.footer a:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>Create your account</h1>
+  <p class="sub">Join Zenrixa and explore the future of VR.</p>
+  <div id="msg" class="msg"></div>
+  <form id="signup-form">
+    <div class="form-group">
+      <label for="email">Email</label>
+      <input id="email" type="email" required placeholder="you@example.com">
+    </div>
+    <div class="form-group">
+      <label for="password">Password</label>
+      <input id="password" type="password" required placeholder="Create a password" minlength="6">
+    </div>
+    <button type="submit" class="btn" id="submit-btn">Sign up</button>
+  </form>
+  <div class="divider">
+    <div class="divider-line"></div>
+    <span class="divider-text">or</span>
+    <div class="divider-line"></div>
+  </div>
+  <button class="btn-google" onclick="signUpWithGoogle()">
+    <svg width="18" height="18" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.611 20.083H42V20H24v8h11.303c-1.649 4.657-6.08 8-11.303 8-6.627 0-12-5.373-12-12s5.373-12 12-12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4 12.955 4 4 12.955 4 24s8.955 20 20 20 20-8.955 20-20c0-1.341-.138-2.65-.389-3.917z"/><path fill="#FF3D00" d="m6.306 14.691 6.571 4.819C14.655 15.108 18.961 12 24 12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4 16.318 4 9.656 8.337 6.306 14.691z"/><path fill="#4CAF50" d="M24 44c5.166 0 9.86-1.977 13.409-5.192l-6.19-5.238A11.91 11.91 0 0 1 24 36c-5.202 0-9.619-3.317-11.283-7.946l-6.522 5.025C9.505 39.556 16.227 44 24 44z"/><path fill="#1976D2" d="M43.611 20.083H42V20H24v8h11.303a12.04 12.04 0 0 1-4.087 5.571l.003-.002 6.19 5.238C36.971 39.205 44 34 44 24c0-1.341-.138-2.65-.389-3.917z"/></svg>
+    Continue with Google
+  </button>
+  <div class="footer">
+    Already have an account? <a href="login.html">Log in</a>
+  </div>
+</div>
+<script src="js/env.js"></script>
+<script src="js/supabase-config.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/purchase-handler.js"></script>
+<script>
+(async () => {
+  const user = await getCurrentUser();
+  if (user) window.location.href = 'account.html';
+})();
+
+const form = document.getElementById('signup-form');
+const msg = document.getElementById('msg');
+const submitBtn = document.getElementById('submit-btn');
+
+form.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const email = document.getElementById('email').value.trim();
+  const password = document.getElementById('password').value;
+  msg.className = 'msg';
+  msg.style.display = 'none';
+  submitBtn.disabled = true;
+  submitBtn.textContent = 'Creating account...';
+  try {
+    const data = await signUp(email, password);
+    const session = await getSession();
+    if (session) {
+      await recordSignupPurchase(session.user.id);
+      try {
+        const planId = localStorage.getItem('pendingPlan');
+        const planName = (planId && PLAN_PRICES[planId]) ? PLAN_PRICES[planId].name : 'Free';
+        await sendEmail(
+          email,
+          'Welcome to Zenrixa',
+          '<div style="font-family:Arial,sans-serif;max-width:560px;margin:0 auto;padding:24px;background:#09090b;color:#fff;border-radius:12px;">' +
+            '<h2 style="margin:0 0 8px;color:#06b6d4;">Welcome to Zenrixa</h2>' +
+            '<p style="font-size:15px;line-height:1.6;color:#d4d4d8;">Hi there,<br>Thanks for joining Zenrixa. Your account is ready and your current plan is <strong style="color:#fff;">' + planName + '</strong>.</p>' +
+            '<p style="font-size:14px;line-height:1.6;color:#a1a1aa;">We turn challenges into opportunities. Explore the future of VR with us.</p>' +
+            '<p style="font-size:12px;color:#71717a;">&mdash; The Zenrixa Team</p>' +
+          '</div>'
+        );
+      } catch (emailErr) {
+        console.warn('Welcome email could not be sent:', emailErr.message);
+      }
+      const retParams = new URLSearchParams(window.location.search);
+      if (retParams.get('plan')) {
+        window.location.href = 'checkout.html?' + retParams.toString();
+      } else {
+        window.location.href = 'account.html';
+      }
+    } else {
+      msg.className = 'msg success';
+      msg.textContent = 'Account created! Check your email for the confirmation link.';
+      msg.style.display = 'block';
+    }
+  } catch (err) {
+    msg.className = 'msg error';
+    msg.textContent = err.message;
+    msg.style.display = 'block';
+  } finally {
+    submitBtn.disabled = false;
+    submitBtn.textContent = 'Sign up';
+  }
+});
+
+async function signUpWithGoogle() {
+  const redirectParams = new URLSearchParams(window.location.search);
+  const redirectTo = redirectParams.get('plan') ? 'checkout.html?' + redirectParams.toString() : 'account.html';
+  const { error } = await supabaseClient.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: window.location.origin + '/' + redirectTo } });
+  if (error) {
+    msg.className = 'msg error';
+    msg.textContent = error.message;
+    msg.style.display = 'block';
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,5 @@
+{
+  "tasks": {
+    "serve": "deno serve index.ts"
+  }
+}
