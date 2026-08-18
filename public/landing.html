@@ -134,7 +134,13 @@ body {
   .philosophy-text-line { font-size: 64px; }
 }
 @media (min-width: 1024px) {
-  .philosophy-text-line { font-size: 85px; }
+  .philosophy-text-line { font-size: 72px; }
+}
+@media (max-width: 767px) {
+  .philosophy-text-line {
+    font-size: clamp(24px, 7vw, 42px);
+    line-height: 1.15;
+  }
 }
 .philosophy-text-line.italic { font-style: italic; font-weight: 300; }
 .philosophy-text-line.bold { font-weight: 700; text-decoration: underline; text-underline-offset: 8px; text-decoration-thickness: 2px; }
@@ -148,7 +154,7 @@ body {
 .philosophy-cards-mobile {
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 16px;
   margin-top: 48px;
 }
 @media (min-width: 768px) {
@@ -156,13 +162,13 @@ body {
 }
 .philosophy-card-mobile {
   width: 100%;
-  background: rgba(0,0,0,0.4);
+  background: rgba(0,0,0,0.25);
   backdrop-filter: blur(8px);
   border: 1px solid rgba(255,255,255,0.15);
-  padding: 24px;
+  padding: 20px;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 14px;
 }
 .philosophy-card-header {
   display: flex;
@@ -230,6 +236,29 @@ body {
 }
 @media (min-width: 1024px) {
   .philosophy-card-desktop { width: 300px; }
+}
+/* Desktop: proper grid spacing for the 01/02/03/04 cards so they frame,
+   but never cover, the background model/animation */
+@media (min-width: 769px) {
+  .philosophy-cards-area {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-rows: auto auto;
+    align-content: space-between;
+    align-items: start;
+    gap: 32px 48px;
+  }
+  .philosophy-card-desktop {
+    position: static !important;
+    left: auto !important;
+    top: auto !important;
+    width: min(300px, 100%) !important;
+    background: rgba(0,0,0,0.3);
+    backdrop-filter: blur(8px);
+    box-shadow: 0 15px 40px rgba(0,0,0,0.35);
+    z-index: 5;
+  }
+  .philosophy-card-desktop:nth-child(2n + 1) { justify-self: end; }
 }
 .philosophy-footer-hint {
   width: 100%;
@@ -878,6 +907,34 @@ h1 { font-size: 64px; font-weight: 300; letter-spacing: -0.03em; line-height: 1.
   h1 { font-size: 40px; }
   .hero-wrap { padding: 24px; }
   .chips-section { padding: 0 24px 24px; }
+}
+
+/* === Mobile (<768px): clean up action button alignment, padding, and spacing === */
+@media (max-width: 767px) {
+  .btns {
+    width: 100%;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+  .btns .btn-primary,
+  .btns .btn-secondary {
+    width: 100%;
+    min-height: 52px;
+    justify-content: center;
+    padding: 14px 20px;
+    font-size: 15px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .btn-primary { gap: 10px; }
+  .btn-primary .arrow { flex-shrink: 0; }
+  .menu-btn { padding: 10px 14px; font-size: 11px; gap: 6px; }
+  .pricing-btn { min-height: 52px; padding: 14px 20px; }
+  .widget-arrow, .widget-plus { width: 36px; height: 36px; }
+
+  /* Hero VR image: zoom out slightly so the VR glasses stay fully visible */
+  #vr-canvas { object-fit: contain; }
 }
 /* === Pricing Section (Section 2) === */
 .pricing-section {
@@ -2410,8 +2467,21 @@ function drawCover(ctx, canvas, img) {
   const ch = canvas.height;
   const imgRatio = img.naturalWidth / img.naturalHeight;
   const canvasRatio = cw / ch;
+  const contain = canvas === vrCanvas && window.innerWidth < 768;
   let dw, dh, dx, dy;
-  if (imgRatio > canvasRatio) {
+  if (contain) {
+    if (imgRatio > canvasRatio) {
+      dw = cw;
+      dh = cw / imgRatio;
+      dx = 0;
+      dy = (ch - dh) / 2;
+    } else {
+      dh = ch;
+      dw = ch * imgRatio;
+      dx = (cw - dw) / 2;
+      dy = 0;
+    }
+  } else if (imgRatio > canvasRatio) {
     dh = ch;
     dw = ch * imgRatio;
     dx = (cw - dw) / 2;
