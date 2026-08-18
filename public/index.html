@@ -933,8 +933,30 @@ h1 { font-size: 64px; font-weight: 300; letter-spacing: -0.03em; line-height: 1.
   .pricing-btn { min-height: 52px; padding: 14px 20px; }
   .widget-arrow, .widget-plus { width: 36px; height: 36px; }
 
-  /* Hero VR image: zoom out slightly so the VR glasses stay fully visible */
-  #vr-canvas { object-fit: contain; }
+  /* Hero VR image + scroll animation canvas: fit the whole frame on small
+     screens so the face/VR glasses on the right edge never get cropped */
+  #vr-canvas, .sticky-wrap canvas { object-fit: contain; }
+
+  /* Glasses/philosophy section: keep the centered text readable over the
+     bright, busy animation */
+  .philosophy-text-line {
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.95), 0 4px 24px rgba(0, 0, 0, 0.85);
+  }
+
+  .philosophy-backdrop-inner {
+    background: rgba(0, 0, 0, 0.35);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px;
+    padding: 28px 20px;
+  }
+
+  /* Hide the 4 cards on mobile so they never cover the animation */
+  .philosophy-cards-mobile,
+  .philosophy-cards-area {
+    display: none;
+  }
 }
 /* === Pricing Section (Section 2) === */
 .pricing-section {
@@ -2467,7 +2489,8 @@ function drawCover(ctx, canvas, img) {
   const ch = canvas.height;
   const imgRatio = img.naturalWidth / img.naturalHeight;
   const canvasRatio = cw / ch;
-  const contain = canvas === vrCanvas && window.innerWidth < 768;
+  const contain = (canvas === vrCanvas || canvas === glassesCanvas) &&
+    window.matchMedia('(max-width: 767px)').matches;
   let dw, dh, dx, dy;
   if (contain) {
     if (imgRatio > canvasRatio) {
@@ -2500,7 +2523,7 @@ function setupScrollListener() {
   window._scrollSetup = true;
   resizeVR();
   resizeGlasses();
-  window.addEventListener('resize', () => { resizeVR(); resizeGlasses(); });
+  window.addEventListener('resize', () => { resizeVR(); resizeGlasses(); redrawCurrentFrames(); });
   window.addEventListener('scroll', onScroll);
   onScroll();
 }
@@ -2559,6 +2582,11 @@ function resizeGlasses() {
   if (!glassesCanvas) return;
   glassesCanvas.width = window.innerWidth;
   glassesCanvas.height = window.innerHeight;
+}
+
+function redrawCurrentFrames() {
+  if (vrReady && lastVRFrame >= 0 && vrImages[lastVRFrame]) drawCover(vrCtx, vrCanvas, vrImages[lastVRFrame]);
+  if (glassesCanvas && glassesReady && lastGlassesFrame >= 0 && glassesImages[lastGlassesFrame]) drawCover(glCtx, glassesCanvas, glassesImages[lastGlassesFrame]);
 }
 
 let lastVRFrame = -1;

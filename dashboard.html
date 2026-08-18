@@ -279,7 +279,7 @@
 
 <body>
   <header>
-    <div class="brand" onclick="window.location.href='landing.html'">
+    <div class="brand" onclick="window.location.href='index.html'">
       <div class="brand-icon">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
           <path d="M4 4h16v3L8 17h12v3H4v-3l12-10H4V4z" />
@@ -290,7 +290,7 @@
     <div class="header-right">
       <span class="role-badge">Provider</span>
       <span class="email-display" id="user-email"></span>
-      <button class="btn btn-site" onclick="window.location.href='landing.html'">View Site</button>
+      <button class="btn btn-site" onclick="window.location.href='index.html'">View Site</button>
       <button class="btn btn-logout" onclick="handleLogout()">Log out</button>
     </div>
   </header>
@@ -379,10 +379,10 @@
 
     async function loadDashboard() {
       const user = await getCurrentUser();
-      if (!user) { window.location.href = 'index.html.html'; return; }
+      if (!user) { window.location.href = 'index.html'; return; }
       const profile = await getCurrentProfile();
       if (!profile || profile.role !== 'provider') {
-        window.location.href = 'index.html.html';
+        window.location.href = 'index.html';
         return;
       }
       document.getElementById('user-email').textContent = user.email;
@@ -509,7 +509,7 @@
 
     async function handleLogout() {
       await logOut();
-      window.location.href = 'index.html.html';
+      window.location.href = 'index.html';
     }
 
     loadDashboard();

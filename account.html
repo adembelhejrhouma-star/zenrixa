@@ -223,7 +223,7 @@
 
 <body>
   <header>
-    <div class="brand" onclick="window.location.href='landing.html'">
+    <div class="brand" onclick="window.location.href='index.html'">
       <div class="brand-icon">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
           <path d="M4 4h16v3L8 17h12v3H4v-3l12-10H4V4z" />
@@ -233,7 +233,7 @@
     </div>
     <div class="header-right">
       <span class="email-display" id="user-email"></span>
-      <button class="btn-back" onclick="window.location.href='landing.html'" title="Back to home">&#8592;</button>
+      <button class="btn-back" onclick="window.location.href='index.html'" title="Back to home">&#8592;</button>
     </div>
   </header>
   <div class="container">
@@ -260,7 +260,7 @@
     async function loadAccount() {
       const user = await getCurrentUser();
       if (!user) {
-        window.location.href = 'index.html.html';
+        window.location.href = 'index.html';
         return;
       }
       await syncUserProfile();
@@ -302,7 +302,7 @@
 
     async function handleLogout() {
       await logOut();
-      window.location.href = 'index.html.html';
+      window.location.href = 'index.html';
     }
 
     (async () => {
