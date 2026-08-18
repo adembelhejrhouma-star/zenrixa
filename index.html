@@ -4003,7 +4003,6 @@
       btn.innerHTML = 'Creating account...';
       try {
         const data = await signUp(email, password);
-        await logAuthEvent('signup', email, 'success');
         await syncUserProfile();
         const session = await getSession();
         if (session) {
@@ -4018,7 +4017,6 @@
           msg.textContent = 'Account created! Check your email for the confirmation link.';
         }
       } catch (err) {
-        await logAuthEvent('signup', email, 'failed', err.message);
         msg.style.display = 'block';
         msg.style.background = 'rgba(239,68,68,0.1)';
         msg.style.border = '1px solid rgba(239,68,68,0.3)';
@@ -4042,7 +4040,6 @@
       btn.innerHTML = 'Logging in...';
       try {
         await logIn(email, password);
-        await logAuthEvent('login', email, 'success');
         await syncUserProfile();
         closeLogin();
         updateHeaderAuth();
@@ -4056,7 +4053,6 @@
           return;
         }
       } catch (err) {
-        await logAuthEvent('login', email, 'failed', err.message);
         msg.style.display = 'block';
         msg.style.background = 'rgba(239,68,68,0.1)';
         msg.style.border = '1px solid rgba(239,68,68,0.3)';
@@ -4145,7 +4141,6 @@
           logoutBtn.className = 'menu-btn';
           logoutBtn.innerHTML = '<span>Log out</span>';
           logoutBtn.onclick = async () => {
-            await logAuthEvent('logout', null, 'success');
             await logOut();
             window.location.reload();
           };

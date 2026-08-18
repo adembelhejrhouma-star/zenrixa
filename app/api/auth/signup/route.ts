@@ -8,6 +8,12 @@ export async function POST(request: Request) {
   const { data, error } = await supabase.auth.signUp({ email, password })
 
   if (error) {
+    await supabase.from('auth_logs').insert({
+      event_type: 'signup',
+      email,
+      status: 'failed',
+      error_message: error.message
+    })
     return NextResponse.json({ error: error.message }, { status: 400 })
   }
 

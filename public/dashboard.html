@@ -370,10 +370,17 @@
       });
     });
 
+    async function fetchAdminUsers() {
+      const res = await fetch('/api/admin/users', { credentials: 'same-origin' });
+      if (!res.ok) throw new Error('Failed to load users');
+      const data = await res.json();
+      return data.users || [];
+    }
+
     async function loadDashboard() {
       const user = await getCurrentUser();
       if (!user) { window.location.href = 'index.html.html'; return; }
-      const profile = await syncUserProfile();
+      const profile = await getCurrentProfile();
       if (!profile || profile.role !== 'provider') {
         window.location.href = 'index.html.html';
         return;
@@ -389,8 +396,7 @@
       try {
         const { count: purchaseCount } = await supabaseClient
           .from('purchases').select('*', { count: 'exact', head: true });
-        const { count: userCount } = await supabaseClient
-          .from('profiles').select('*', { count: 'exact', head: true });
+        const userCount = (await fetchAdminUsers()).length;
         document.getElementById('stats').innerHTML = `
       <div class="stat-card"><div class="stat-number">${purchaseCount || 0}</div><div class="stat-label">Purchases</div></div>
       <div class="stat-card"><div class="stat-number">${userCount || 0}</div><div class="stat-label">Users</div></div>
@@ -429,11 +435,7 @@
     async function loadUsers() {
       const loading = document.getElementById('users-loading');
       try {
-        const { data, error } = await supabaseClient
-          .from('profiles')
-          .select('*')
-          .order('created_at', { ascending: false });
-        if (error) throw error;
+        const data = await fetchAdminUsers();
         loading.style.display = 'none';
         const body = document.getElementById('users-body');
         if (!data || data.length === 0) {
@@ -490,17 +492,22 @@
     }
 
     async function upgradeToProvider(userId) {
-      const { error } = await supabaseClient
-        .from('profiles')
-        .update({ role: 'provider' })
-        .eq('id', userId);
-      if (error) { alert(error.message); return; }
+      const res = await fetch('/api/admin/users', {
+        method: 'PATCH',
+        credentials: 'same-origin',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: userId, role: 'provider' })
+      });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        alert(data.error || 'Failed to upgrade user');
+        return;
+      }
       await loadUsers();
       await loadStats();
     }
 
     async function handleLogout() {
-      await logAuthEvent('logout', null, 'success');
       await logOut();
       window.location.href = 'index.html.html';
     }

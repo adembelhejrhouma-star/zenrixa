@@ -10,17 +10,16 @@ export async function GET() {
     return NextResponse.json({ user: null }, { status: 401 })
   }
 
-  const { data: profile } = await supabase
-    .from('user_profiles')
-    .select('*')
-    .eq('id', user.id)
-    .maybeSingle()
-
   return NextResponse.json({
     user: {
       id: user.id,
       email: user.email
     },
-    profile
+    profile: {
+      id: user.id,
+      email: user.email,
+      role: user.user_metadata?.role || 'user',
+      plan: user.user_metadata?.plan || 'free'
+    }
   })
 }

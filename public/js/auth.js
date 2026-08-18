@@ -67,22 +67,33 @@ function onAuthStateChange(callback) {
 }
 
 async function getProfile(userId) {
-  const { data, error } = await supabaseClient
-    .from('user_profiles')
-    .select('*')
-    .eq('id', userId)
-    .maybeSingle()
-  if (error) return null
-  return data
+  try {
+    const { data: { user } } = await supabaseClient.auth.getUser()
+    if (!user || (userId && user.id !== userId)) return null
+    return {
+      id: user.id,
+      email: user.email,
+      role: user.user_metadata?.role || 'user',
+      plan: user.user_metadata?.plan || 'free',
+      full_name: user.user_metadata?.full_name || null,
+      avatar_url: user.user_metadata?.avatar_url || null,
+      created_at: user.created_at
+    }
+  } catch {
+    return null
+  }
 }
 
 async function getCurrentProfile() {
-  const user = await getCurrentUser()
-  if (!user) return null
-  return getProfile(user.id)
+  try {
+    const data = await apiFetch('session')
+    return data.profile || null
+  } catch {
+    return null
+  }
 }
 
-// RBAC: check current user's role from user_profiles
+// RBAC: check current user's role from auth user metadata
 async function getUserRole() {
   const profile = await getCurrentProfile()
   return profile ? (profile.role || profile.plan) : null
@@ -119,24 +130,5 @@ async function logAuthEvent(event_type, email, status, error_message) {
 async function syncUserProfile() {
   const user = await getCurrentUser()
   if (!user) return null
-  let profile = await getProfile(user.id)
-  if (!profile) {
-    const { data, error } = await supabaseClient
-      .from('user_profiles')
-      .upsert({ id: user.id, email: user.email, plan: 'free' })
-      .select()
-      .single()
-    if (error) {
-      console.error('Failed to sync profile:', error.message)
-      return null
-    }
-    profile = data
-  } else if (profile.email !== user.email) {
-    await supabaseClient
-      .from('profiles')
-      .update({ email: user.email })
-      .eq('id', user.id)
-    profile.email = user.email
-  }
-  return profile
+  return getProfile(user.id)
 }

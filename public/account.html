@@ -301,7 +301,6 @@
     }
 
     async function handleLogout() {
-      await logAuthEvent('logout', null, 'success');
       await logOut();
       window.location.href = 'index.html.html';
     }
