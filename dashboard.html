@@ -1,304 +1,512 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Provider Dashboard - Zenrixa</title>
-<script src="https://unpkg.com/@supabase/supabase-js@2"></script>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-<style>
-* { margin: 0; padding: 0; box-sizing: border-box; }
-body {
-  font-family: 'DM Sans', sans-serif;
-  background: #000;
-  color: #fff;
-  min-height: 100vh;
-}
-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 24px 48px;
-  border-bottom: 1px solid rgba(255,255,255,0.05);
-}
-.brand { display: flex; align-items: center; gap: 12px; cursor: pointer; }
-.brand-icon { width: 32px; height: 32px; border-radius: 8px; background: #fff; display: flex; align-items: center; justify-content: center; padding: 6px; }
-.brand-icon svg { width: 100%; height: 100%; color: #0b0b0c; }
-.brand-name { font-weight: 800; font-size: 20px; letter-spacing: -0.02em; }
-.header-right { display: flex; align-items: center; gap: 16px; }
-.role-badge {
-  font-size: 10px;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  padding: 4px 10px;
-  border-radius: 999px;
-  background: rgba(6,182,212,0.1);
-  color: #22d3ee;
-  border: 1px solid rgba(6,182,212,0.2);
-}
-.email-display { font-size: 13px; color: #a1a1aa; }
-.btn {
-  padding: 8px 16px;
-  border-radius: 8px;
-  font-size: 12px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: background 0.2s;
-  border: none;
-}
-.btn-logout { border: 1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.05); color: #fff; }
-.btn-logout:hover { background: rgba(255,255,255,0.1); }
-.btn-site { background: #06b6d4; color: #000; font-weight: 600; }
-.btn-site:hover { background: #22d3ee; }
-.btn-primary { background: #06b6d4; color: #000; font-weight: 600; }
-.btn-primary:hover { background: #22d3ee; }
-.container { max-width: 1200px; margin: 0 auto; padding: 48px 24px; }
-.stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-bottom: 48px; }
-.stat-card {
-  background: rgba(255,255,255,0.03);
-  border: 1px solid rgba(255,255,255,0.1);
-  border-radius: 16px;
-  padding: 24px;
-}
-.stat-number { font-size: 36px; font-weight: 700; }
-.stat-label { font-size: 12px; color: #737373; text-transform: uppercase; letter-spacing: 0.05em; margin-top: 4px; }
-.tabs { display: flex; gap: 8px; margin-bottom: 24px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 8px; }
-.tab {
-  padding: 8px 20px;
-  border-radius: 8px;
-  font-size: 13px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s;
-  border: none;
-  background: none;
-  color: #737373;
-}
-.tab.active { background: rgba(255,255,255,0.05); color: #fff; }
-.tab:hover { color: #fff; }
-table { width: 100%; border-collapse: collapse; }
-th { text-align: left; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: #737373; padding: 12px 8px; border-bottom: 1px solid rgba(255,255,255,0.05); }
-td { padding: 12px 8px; font-size: 13px; border-bottom: 1px solid rgba(255,255,255,0.03); }
-.status { font-size: 10px; text-transform: uppercase; letter-spacing: 0.05em; padding: 2px 8px; border-radius: 999px; }
-.status-active { background: rgba(34,197,94,0.1); color: #4ade80; }
-.status-pending { background: rgba(245,158,11,0.1); color: #fbbf24; }
-.status-failed { background: rgba(239,68,68,0.1); color: #f87171; }
-td .role { font-size: 10px; text-transform: uppercase; letter-spacing: 0.05em; padding: 2px 8px; border-radius: 999px; }
-.role-provider { background: rgba(6,182,212,0.1); color: #22d3ee; }
-.role-user { background: rgba(255,255,255,0.05); color: #a1a1aa; }
-.loading { text-align: center; padding: 48px; color: #737373; }
-.tab-content { display: none; }
-.tab-content.active { display: block; }
-.alert { padding: 12px; border-radius: 8px; font-size: 13px; margin-bottom: 16px; display: none; }
-.alert.error { display: block; background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.3); color: #fca5a5; }
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Provider Dashboard - Zenrixa</title>
+  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700;800&display=swap"
+    rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: #000;
+      color: #fff;
+      min-height: 100vh;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 24px 48px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+    }
+
+    .brand-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 6px;
+    }
+
+    .brand-icon svg {
+      width: 100%;
+      height: 100%;
+      color: #0b0b0c;
+    }
+
+    .brand-name {
+      font-weight: 800;
+      font-size: 20px;
+      letter-spacing: -0.02em;
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .role-badge {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: rgba(6, 182, 212, 0.1);
+      color: #22d3ee;
+      border: 1px solid rgba(6, 182, 212, 0.2);
+    }
+
+    .email-display {
+      font-size: 13px;
+      color: #a1a1aa;
+    }
+
+    .btn {
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.2s;
+      border: none;
+    }
+
+    .btn-logout {
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      background: rgba(255, 255, 255, 0.05);
+      color: #fff;
+    }
+
+    .btn-logout:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .btn-site {
+      background: #06b6d4;
+      color: #000;
+      font-weight: 600;
+    }
+
+    .btn-site:hover {
+      background: #22d3ee;
+    }
+
+    .btn-primary {
+      background: #06b6d4;
+      color: #000;
+      font-weight: 600;
+    }
+
+    .btn-primary:hover {
+      background: #22d3ee;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 48px 24px;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      margin-bottom: 48px;
+    }
+
+    .stat-card {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 16px;
+      padding: 24px;
+    }
+
+    .stat-number {
+      font-size: 36px;
+      font-weight: 700;
+    }
+
+    .stat-label {
+      font-size: 12px;
+      color: #737373;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-top: 4px;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 24px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      padding-bottom: 8px;
+    }
+
+    .tab {
+      padding: 8px 20px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+      border: none;
+      background: none;
+      color: #737373;
+    }
+
+    .tab.active {
+      background: rgba(255, 255, 255, 0.05);
+      color: #fff;
+    }
+
+    .tab:hover {
+      color: #fff;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th {
+      text-align: left;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #737373;
+      padding: 12px 8px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    td {
+      padding: 12px 8px;
+      font-size: 13px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+    }
+
+    .status {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 2px 8px;
+      border-radius: 999px;
+    }
+
+    .status-active {
+      background: rgba(34, 197, 94, 0.1);
+      color: #4ade80;
+    }
+
+    .status-pending {
+      background: rgba(245, 158, 11, 0.1);
+      color: #fbbf24;
+    }
+
+    .status-failed {
+      background: rgba(239, 68, 68, 0.1);
+      color: #f87171;
+    }
+
+    td .role {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 2px 8px;
+      border-radius: 999px;
+    }
+
+    .role-provider {
+      background: rgba(6, 182, 212, 0.1);
+      color: #22d3ee;
+    }
+
+    .role-user {
+      background: rgba(255, 255, 255, 0.05);
+      color: #a1a1aa;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 48px;
+      color: #737373;
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    .alert {
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 13px;
+      margin-bottom: 16px;
+      display: none;
+    }
+
+    .alert.error {
+      display: block;
+      background: rgba(239, 68, 68, 0.1);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      color: #fca5a5;
+    }
+  </style>
 </head>
+
 <body>
-<header>
-  <div class="brand" onclick="window.location.href='landing.html'">
-    <div class="brand-icon">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
-        <path d="M4 4h16v3L8 17h12v3H4v-3l12-10H4V4z" />
-      </svg>
+  <header>
+    <div class="brand" onclick="window.location.href='landing.html'">
+      <div class="brand-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+          <path d="M4 4h16v3L8 17h12v3H4v-3l12-10H4V4z" />
+        </svg>
+      </div>
+      <span class="brand-name">Zenrixa</span>
     </div>
-    <span class="brand-name">Zenrixa</span>
+    <div class="header-right">
+      <span class="role-badge">Provider</span>
+      <span class="email-display" id="user-email"></span>
+      <button class="btn btn-site" onclick="window.location.href='landing.html'">View Site</button>
+      <button class="btn btn-logout" onclick="handleLogout()">Log out</button>
+    </div>
+  </header>
+  <div class="container">
+    <h1 style="font-size:28px;font-weight:700;letter-spacing:-0.02em;margin-bottom:4px;">Provider Dashboard</h1>
+    <p style="color:#a1a1aa;font-size:14px;margin-bottom:40px;">Manage users, subscriptions, and platform data.</p>
+
+    <div id="alert" class="alert"></div>
+
+    <div class="stats" id="stats"></div>
+
+    <div class="tabs">
+      <button class="tab active" data-tab="purchases">Purchases</button>
+      <button class="tab" data-tab="users">Users</button>
+      <button class="tab" data-tab="logs">Auth Logs</button>
+    </div>
+
+    <div id="tab-purchases" class="tab-content active">
+      <table>
+        <thead>
+          <tr>
+            <th>User</th>
+            <th>Plan</th>
+            <th>Amount</th>
+            <th>Status</th>
+            <th>Date</th>
+          </tr>
+        </thead>
+        <tbody id="purchases-body"></tbody>
+      </table>
+      <div id="purchases-loading" class="loading">Loading purchases...</div>
+    </div>
+
+    <div id="tab-users" class="tab-content">
+      <table>
+        <thead>
+          <tr>
+            <th>Email</th>
+            <th>Role</th>
+            <th>Joined</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="users-body"></tbody>
+      </table>
+      <div id="users-loading" class="loading">Loading users...</div>
+    </div>
+
+    <div id="tab-logs" class="tab-content">
+      <table>
+        <thead>
+          <tr>
+            <th>Event</th>
+            <th>Email</th>
+            <th>Status</th>
+            <th>Error</th>
+            <th>Date</th>
+          </tr>
+        </thead>
+        <tbody id="logs-body"></tbody>
+      </table>
+      <div id="logs-loading" class="loading">Loading auth logs...</div>
+    </div>
   </div>
-  <div class="header-right">
-    <span class="role-badge">Provider</span>
-    <span class="email-display" id="user-email"></span>
-    <button class="btn btn-site" onclick="window.location.href='landing.html'">View Site</button>
-    <button class="btn btn-logout" onclick="handleLogout()">Log out</button>
-  </div>
-</header>
-<div class="container">
-  <h1 style="font-size:28px;font-weight:700;letter-spacing:-0.02em;margin-bottom:4px;">Provider Dashboard</h1>
-  <p style="color:#a1a1aa;font-size:14px;margin-bottom:40px;">Manage users, subscriptions, and platform data.</p>
 
-  <div id="alert" class="alert"></div>
+  <script src="js/env.js"></script>
+  <script src="js/supabase-config.js"></script>
+  <script src="js/auth.js"></script>
+  <script>
+    const tabs = document.querySelectorAll('.tab');
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        tabs.forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        document.querySelectorAll('.tab-content').forEach(tc => tc.classList.remove('active'));
+        document.getElementById('tab-' + tab.dataset.tab).classList.add('active');
+      });
+    });
 
-  <div class="stats" id="stats"></div>
+    async function loadDashboard() {
+      const user = await getCurrentUser();
+      if (!user) { window.location.href = 'index.html.html'; return; }
+      const profile = await syncUserProfile();
+      if (!profile || profile.role !== 'provider') {
+        window.location.href = 'index.html.html';
+        return;
+      }
+      document.getElementById('user-email').textContent = user.email;
+      await loadStats();
+      await loadPurchases();
+      await loadUsers();
+      await loadLogs();
+    }
 
-  <div class="tabs">
-    <button class="tab active" data-tab="purchases">Purchases</button>
-    <button class="tab" data-tab="users">Users</button>
-    <button class="tab" data-tab="logs">Auth Logs</button>
-  </div>
-
-  <div id="tab-purchases" class="tab-content active">
-    <table>
-      <thead><tr><th>User</th><th>Plan</th><th>Amount</th><th>Status</th><th>Date</th></tr></thead>
-      <tbody id="purchases-body"></tbody>
-    </table>
-    <div id="purchases-loading" class="loading">Loading purchases...</div>
-  </div>
-
-  <div id="tab-users" class="tab-content">
-    <table>
-      <thead><tr><th>Email</th><th>Role</th><th>Joined</th><th>Actions</th></tr></thead>
-      <tbody id="users-body"></tbody>
-    </table>
-    <div id="users-loading" class="loading">Loading users...</div>
-  </div>
-
-  <div id="tab-logs" class="tab-content">
-    <table>
-      <thead><tr><th>Event</th><th>Email</th><th>Status</th><th>Error</th><th>Date</th></tr></thead>
-      <tbody id="logs-body"></tbody>
-    </table>
-    <div id="logs-loading" class="loading">Loading auth logs...</div>
-  </div>
-</div>
-
-<script src="js/env.js"></script>
-<script src="js/supabase-config.js"></script>
-<script src="js/auth.js"></script>
-<script>
-const tabs = document.querySelectorAll('.tab');
-tabs.forEach(tab => {
-  tab.addEventListener('click', () => {
-    tabs.forEach(t => t.classList.remove('active'));
-    tab.classList.add('active');
-    document.querySelectorAll('.tab-content').forEach(tc => tc.classList.remove('active'));
-    document.getElementById('tab-' + tab.dataset.tab).classList.add('active');
-  });
-});
-
-async function loadDashboard() {
-  const user = await getCurrentUser();
-  if (!user) { window.location.href = 'landing.html'; return; }
-  const profile = await syncUserProfile();
-  if (!profile || profile.role !== 'provider') {
-    window.location.href = 'landing.html';
-    return;
-  }
-  document.getElementById('user-email').textContent = user.email;
-  await loadStats();
-  await loadPurchases();
-  await loadUsers();
-  await loadLogs();
-}
-
-async function loadStats() {
-  try {
-    const { count: purchaseCount } = await supabaseClient
-      .from('purchases').select('*', { count: 'exact', head: true });
-    const { count: userCount } = await supabaseClient
-      .from('profiles').select('*', { count: 'exact', head: true });
-    document.getElementById('stats').innerHTML = `
+    async function loadStats() {
+      try {
+        const { count: purchaseCount } = await supabaseClient
+          .from('purchases').select('*', { count: 'exact', head: true });
+        const { count: userCount } = await supabaseClient
+          .from('profiles').select('*', { count: 'exact', head: true });
+        document.getElementById('stats').innerHTML = `
       <div class="stat-card"><div class="stat-number">${purchaseCount || 0}</div><div class="stat-label">Purchases</div></div>
       <div class="stat-card"><div class="stat-number">${userCount || 0}</div><div class="stat-label">Users</div></div>
       <div class="stat-card"><div class="stat-number" id="log-count">0</div><div class="stat-label">Auth Events</div></div>
     `;
-  } catch (err) {
-    console.error('Stats error:', err);
-  }
-}
-
-async function loadPurchases() {
-  const loading = document.getElementById('purchases-loading');
-  try {
-    const { data, error } = await supabaseClient
-      .from('purchases')
-      .select('*')
-      .order('created_at', { ascending: false });
-    if (error) throw error;
-    loading.style.display = 'none';
-    const body = document.getElementById('purchases-body');
-    if (!data || data.length === 0) {
-      body.innerHTML = '<tr><td colspan="5" style="text-align:center;color:#737373;padding:48px;">No purchases yet</td></tr>';
-      return;
+      } catch (err) {
+        console.error('Stats error:', err);
+      }
     }
-    body.innerHTML = data.map(p => {
-      const s = p.status;
-      const sc = s === 'active' ? 'status-active' : s === 'pending' ? 'status-pending' : 'status-failed';
-      const d = new Date(p.created_at).toLocaleDateString('en-US', { year:'numeric', month:'short', day:'numeric' });
-      return `<tr><td>${p.user_id.slice(0,8)}...</td><td>${p.plan_name}</td><td>$${p.amount}</td><td><span class="status ${sc}">${s}</span></td><td>${d}</td></tr>`;
-    }).join('');
-  } catch (err) {
-    loading.textContent = 'Error loading purchases';
-  }
-}
 
-async function loadUsers() {
-  const loading = document.getElementById('users-loading');
-  try {
-    const { data, error } = await supabaseClient
-      .from('profiles')
-      .select('*')
-      .order('created_at', { ascending: false });
-    if (error) throw error;
-    loading.style.display = 'none';
-    const body = document.getElementById('users-body');
-    if (!data || data.length === 0) {
-      body.innerHTML = '<tr><td colspan="4" style="text-align:center;color:#737373;padding:48px;">No users</td></tr>';
-      return;
+    async function loadPurchases() {
+      const loading = document.getElementById('purchases-loading');
+      try {
+        const { data, error } = await supabaseClient
+          .from('purchases')
+          .select('*')
+          .order('created_at', { ascending: false });
+        if (error) throw error;
+        loading.style.display = 'none';
+        const body = document.getElementById('purchases-body');
+        if (!data || data.length === 0) {
+          body.innerHTML = '<tr><td colspan="5" style="text-align:center;color:#737373;padding:48px;">No purchases yet</td></tr>';
+          return;
+        }
+        body.innerHTML = data.map(p => {
+          const s = p.status;
+          const sc = s === 'active' ? 'status-active' : s === 'pending' ? 'status-pending' : 'status-failed';
+          const d = new Date(p.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+          return `<tr><td>${p.user_id.slice(0, 8)}...</td><td>${p.plan_name}</td><td>$${p.amount}</td><td><span class="status ${sc}">${s}</span></td><td>${d}</td></tr>`;
+        }).join('');
+      } catch (err) {
+        loading.textContent = 'Error loading purchases';
+      }
     }
-    body.innerHTML = data.map(p => {
-      const d = new Date(p.created_at).toLocaleDateString('en-US', { year:'numeric', month:'short', day:'numeric' });
-      return `<tr>
+
+    async function loadUsers() {
+      const loading = document.getElementById('users-loading');
+      try {
+        const { data, error } = await supabaseClient
+          .from('profiles')
+          .select('*')
+          .order('created_at', { ascending: false });
+        if (error) throw error;
+        loading.style.display = 'none';
+        const body = document.getElementById('users-body');
+        if (!data || data.length === 0) {
+          body.innerHTML = '<tr><td colspan="4" style="text-align:center;color:#737373;padding:48px;">No users</td></tr>';
+          return;
+        }
+        body.innerHTML = data.map(p => {
+          const d = new Date(p.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+          return `<tr>
         <td>${p.email || '—'}</td>
         <td><span class="role role-${p.role}">${p.role}</span></td>
         <td>${d}</td>
         <td>${p.role === 'user' ? `<button class="btn btn-primary" onclick="upgradeToProvider('${p.id}')" style="padding:4px 12px;font-size:11px;">Upgrade</button>` : '<span style="color:#737373;font-size:11px;">—</span>'}</td>
       </tr>`;
-    }).join('');
-  } catch (err) {
-    loading.textContent = 'Error loading users';
-  }
-}
-
-async function loadLogs() {
-  const loading = document.getElementById('logs-loading');
-  try {
-    const { data, error } = await supabaseClient
-      .from('auth_logs')
-      .select('*')
-      .order('created_at', { ascending: false })
-      .limit(100);
-    if (error) throw error;
-    const { count } = await supabaseClient
-      .from('auth_logs')
-      .select('*', { count: 'exact', head: true });
-    document.getElementById('log-count').textContent = count || 0;
-    loading.style.display = 'none';
-    const body = document.getElementById('logs-body');
-    if (!data || data.length === 0) {
-      body.innerHTML = '<tr><td colspan="5" style="text-align:center;color:#737373;padding:48px;">No auth logs yet</td></tr>';
-      return;
+        }).join('');
+      } catch (err) {
+        loading.textContent = 'Error loading users';
+      }
     }
-    body.innerHTML = data.map(l => {
-      const d = new Date(l.created_at).toLocaleDateString('en-US', { year:'numeric', month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' });
-      const statusClass = l.status === 'success' ? 'status-active' : 'status-failed';
-      return `<tr>
-        <td style="text-transform:capitalize;">${l.event_type.replace('_',' ')}</td>
+
+    async function loadLogs() {
+      const loading = document.getElementById('logs-loading');
+      try {
+        const { data, error } = await supabaseClient
+          .from('auth_logs')
+          .select('*')
+          .order('created_at', { ascending: false })
+          .limit(100);
+        if (error) throw error;
+        const { count } = await supabaseClient
+          .from('auth_logs')
+          .select('*', { count: 'exact', head: true });
+        document.getElementById('log-count').textContent = count || 0;
+        loading.style.display = 'none';
+        const body = document.getElementById('logs-body');
+        if (!data || data.length === 0) {
+          body.innerHTML = '<tr><td colspan="5" style="text-align:center;color:#737373;padding:48px;">No auth logs yet</td></tr>';
+          return;
+        }
+        body.innerHTML = data.map(l => {
+          const d = new Date(l.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+          const statusClass = l.status === 'success' ? 'status-active' : 'status-failed';
+          return `<tr>
+        <td style="text-transform:capitalize;">${l.event_type.replace('_', ' ')}</td>
         <td>${l.email || '—'}</td>
         <td><span class="status ${statusClass}">${l.status}</span></td>
         <td style="color:#f87171;font-size:12px;">${l.error_message || '—'}</td>
         <td style="font-size:12px;color:#737373;">${d}</td>
       </tr>`;
-    }).join('');
-  } catch (err) {
-    loading.textContent = 'Error loading logs';
-  }
-}
+        }).join('');
+      } catch (err) {
+        loading.textContent = 'Error loading logs';
+      }
+    }
 
-async function upgradeToProvider(userId) {
-  const { error } = await supabaseClient
-    .from('profiles')
-    .update({ role: 'provider' })
-    .eq('id', userId);
-  if (error) { alert(error.message); return; }
-  await loadUsers();
-  await loadStats();
-}
+    async function upgradeToProvider(userId) {
+      const { error } = await supabaseClient
+        .from('profiles')
+        .update({ role: 'provider' })
+        .eq('id', userId);
+      if (error) { alert(error.message); return; }
+      await loadUsers();
+      await loadStats();
+    }
 
-async function handleLogout() {
-  await logAuthEvent('logout', null, 'success');
-  await logOut();
-  window.location.href = 'landing.html';
-}
+    async function handleLogout() {
+      await logAuthEvent('logout', null, 'success');
+      await logOut();
+      window.location.href = 'index.html.html';
+    }
 
-loadDashboard();
-</script>
+    loadDashboard();
+  </script>
 </body>
+
 </html>
