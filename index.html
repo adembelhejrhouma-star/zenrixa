@@ -1555,15 +1555,42 @@
         height: 36px;
       }
 
-      /* Hero VR image: on small screens the animation is scaled down to ~65% of
-         the viewport height and positioned so the VR man's face sits exactly
-         at the center of the phone screen. */
+      /* Hero VR image: show the full frame on small screens so the man's
+         profile and orange visor stay visible on the right side, matching the
+         original framing. */
       #vr-canvas {
-        object-fit: cover;
+        object-fit: contain;
       }
 
       .sticky-wrap canvas {
         object-fit: contain;
+      }
+
+      /* Hero layout: heading / stars / buttons stacked vertically over the
+         background, showcase card pinned to the lower part of the section. */
+      .hero-wrap {
+        align-items: stretch;
+        padding: 16px 24px 24px;
+      }
+
+      .hero-grid {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        gap: 24px;
+      }
+
+      .hero-left {
+        gap: 20px;
+      }
+
+      h1 {
+        max-width: 100%;
+      }
+
+      .hero-right,
+      .widget-card {
+        width: 100%;
       }
 
       /* Glasses/philosophy section: keep the centered text readable over the
@@ -3683,7 +3710,7 @@
       const imgRatio = img.naturalWidth / img.naturalHeight;
       const canvasRatio = cw / ch;
       const isMobile = window.matchMedia('(max-width: 767px)').matches;
-      const contain = canvas === glassesCanvas && isMobile;
+      const contain = isMobile;
       let dw, dh, dx, dy;
       if (contain) {
         if (imgRatio > canvasRatio) {
@@ -3698,17 +3725,10 @@
           dy = 0;
         }
       } else if (imgRatio > canvasRatio) {
-        if (canvas === vrCanvas && isMobile) {
-          dh = ch * 0.65;
-          dw = dh * imgRatio;
-          dx = Math.min(0, Math.max(cw - dw, cw / 2 - dw * 0.8));
-          dy = Math.max(0, Math.min(ch - dh, ch / 2 - dh * 0.4));
-        } else {
-          dh = ch;
-          dw = ch * imgRatio;
-          dx = (cw - dw) / 2;
-          dy = 0;
-        }
+        dh = ch;
+        dw = ch * imgRatio;
+        dx = (cw - dw) / 2;
+        dy = 0;
       } else {
         dw = cw;
         dh = cw / imgRatio;
