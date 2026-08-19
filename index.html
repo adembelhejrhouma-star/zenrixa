@@ -1557,9 +1557,18 @@
 
       /* Hero VR image: show the full frame on small screens so the man's
          profile and orange visor stay visible on the right side, matching the
-         original framing. */
+         original framing. The canvas background continues the animation's
+         orange gradient edge-to-edge so there are no black bars behind the
+         header or the showcase card. */
       #vr-canvas {
         object-fit: contain;
+        background: linear-gradient(
+          180deg,
+          #8a1d04 0%,
+          #d13c02 30%,
+          #f06008 55%,
+          #f7751b 100%
+        );
       }
 
       .sticky-wrap canvas {
@@ -1591,6 +1600,25 @@
       .hero-right,
       .widget-card {
         width: 100%;
+      }
+
+      /* Contrast over the full-height orange background: soften text edges
+         and give the showcase card a subtle scrim so it stays readable. */
+      .tag,
+      .stars-row,
+      h1 {
+        text-shadow: 0 1px 3px rgba(0, 0, 0, 0.45);
+      }
+
+      .widget-card {
+        background: rgba(12, 4, 2, 0.35);
+        backdrop-filter: blur(6px);
+        -webkit-backdrop-filter: blur(6px);
+        border: 1px solid rgba(255, 255, 255, 0.25);
+      }
+
+      .widget-card::before {
+        background: radial-gradient(ellipse at center, rgba(255, 255, 255, 0.12), transparent);
       }
 
       /* Glasses/philosophy section: keep the centered text readable over the
