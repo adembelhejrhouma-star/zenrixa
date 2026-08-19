@@ -1555,9 +1555,9 @@
         height: 36px;
       }
 
-      /* Hero VR image: on small screens the animation is scaled down to ~72% of
-         the viewport height and centered so the VR man sits right under the
-         headline (drawCover keeps the crop anchored on the face). */
+      /* Hero VR image: on small screens the animation is scaled down to ~65% of
+         the viewport height and positioned so the VR man's face sits exactly
+         at the center of the phone screen. */
       #vr-canvas {
         object-fit: cover;
       }
@@ -3699,10 +3699,10 @@
         }
       } else if (imgRatio > canvasRatio) {
         if (canvas === vrCanvas && isMobile) {
-          dh = ch * 0.72;
+          dh = ch * 0.65;
           dw = dh * imgRatio;
           dx = Math.min(0, Math.max(cw - dw, cw / 2 - dw * 0.8));
-          dy = (ch - dh) / 2;
+          dy = Math.max(0, Math.min(ch - dh, ch / 2 - dh * 0.4));
         } else {
           dh = ch;
           dw = ch * imgRatio;
@@ -3774,8 +3774,12 @@
     }
 
     function resizeVR() {
-      vrCanvas.width = window.innerWidth;
-      vrCanvas.height = window.innerHeight;
+      const w = window.innerWidth;
+      const h = window.innerHeight;
+      vrCanvas.width = w;
+      vrCanvas.height = h;
+      vrCanvas.style.width = w + 'px';
+      vrCanvas.style.height = h + 'px';
     }
 
     function resizeGlasses() {
