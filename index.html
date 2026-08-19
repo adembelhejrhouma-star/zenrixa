@@ -1555,14 +1555,9 @@
         height: 36px;
       }
 
-      /* Hero VR image: fill the section edge-to-edge like Section 4 so the
-         orange background covers the full viewport and the face stays framed
-         closely (drawCover keeps the crop anchored on the face). The scroll
-         animation canvas still fits its whole frame. */
-      #vr-canvas {
-        object-fit: cover;
-      }
-
+      /* Hero VR image + scroll animation canvas: fit the whole frame on small
+         screens so the face/VR glasses on the right edge never get cropped */
+      #vr-canvas,
       .sticky-wrap canvas {
         object-fit: contain;
       }
@@ -3683,8 +3678,8 @@
       const ch = canvas.height;
       const imgRatio = img.naturalWidth / img.naturalHeight;
       const canvasRatio = cw / ch;
-      const isMobile = window.matchMedia('(max-width: 767px)').matches;
-      const contain = canvas === glassesCanvas && isMobile;
+      const contain = (canvas === vrCanvas || canvas === glassesCanvas) &&
+        window.matchMedia('(max-width: 767px)').matches;
       let dw, dh, dx, dy;
       if (contain) {
         if (imgRatio > canvasRatio) {
@@ -3701,11 +3696,7 @@
       } else if (imgRatio > canvasRatio) {
         dh = ch;
         dw = ch * imgRatio;
-        if (canvas === vrCanvas && isMobile) {
-          dx = Math.min(0, Math.max(cw - dw, cw / 2 - dw * 0.82));
-        } else {
-          dx = (cw - dw) / 2;
-        }
+        dx = (cw - dw) / 2;
         dy = 0;
       } else {
         dw = cw;
