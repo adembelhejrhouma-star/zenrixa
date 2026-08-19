@@ -1555,10 +1555,9 @@
         height: 36px;
       }
 
-      /* Hero VR image: zoom to cover the whole viewport so the orange
-         background fills the full width/height with no black bars, and the
-         animation reads bigger on small screens. The scroll animation canvas
-         still fits its whole frame. */
+      /* Hero VR image: on small screens the animation is scaled down to ~72% of
+         the viewport height and centered so the VR man sits right under the
+         headline (drawCover keeps the crop anchored on the face). */
       #vr-canvas {
         object-fit: cover;
       }
@@ -3683,8 +3682,8 @@
       const ch = canvas.height;
       const imgRatio = img.naturalWidth / img.naturalHeight;
       const canvasRatio = cw / ch;
-      const contain = canvas === glassesCanvas &&
-        window.matchMedia('(max-width: 767px)').matches;
+      const isMobile = window.matchMedia('(max-width: 767px)').matches;
+      const contain = canvas === glassesCanvas && isMobile;
       let dw, dh, dx, dy;
       if (contain) {
         if (imgRatio > canvasRatio) {
@@ -3699,14 +3698,17 @@
           dy = 0;
         }
       } else if (imgRatio > canvasRatio) {
-        dh = ch;
-        dw = ch * imgRatio;
-        if (canvas === vrCanvas && window.matchMedia('(max-width: 767px)').matches) {
+        if (canvas === vrCanvas && isMobile) {
+          dh = ch * 0.72;
+          dw = dh * imgRatio;
           dx = Math.min(0, Math.max(cw - dw, cw / 2 - dw * 0.8));
+          dy = (ch - dh) / 2;
         } else {
+          dh = ch;
+          dw = ch * imgRatio;
           dx = (cw - dw) / 2;
+          dy = 0;
         }
-        dy = 0;
       } else {
         dw = cw;
         dh = cw / imgRatio;
