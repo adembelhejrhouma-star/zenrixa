@@ -967,11 +967,14 @@ h1 { font-size: 64px; font-weight: 300; letter-spacing: -0.03em; line-height: 1.
   }
 
   .stars-row {
-    gap: 8px;
-    padding: 8px 12px;
-    font-size: 11px;
+    align-self: flex-start;
+    width: fit-content;
+    gap: 6px;
+    padding: 8px 10px;
+    font-size: 9.5px;
   }
-  .stars-row .stars svg { width: 12px; height: 12px; }
+  .stars-row .stars { gap: 3px; }
+  .stars-row .stars svg { width: 10px; height: 10px; }
   .stars-row span { white-space: nowrap; }
 
   /* Compact buttons so the two-column hero never overflows on narrow screens. */
@@ -2564,11 +2567,16 @@ function drawCover(ctx, canvas, img) {
   const ch = canvas.height;
   const imgRatio = img.naturalWidth / img.naturalHeight;
   const canvasRatio = cw / ch;
+  // Mobile: keep the same compact cover scale, but shift the crop toward the
+  // right (object-position ~62%) so the man's face — which sits right-of-center
+  // in the frame — is fully visible instead of being clipped at the right edge.
+  const isMobile = window.matchMedia('(max-width: 767px)').matches;
+  const objPosX = isMobile ? 0.65 : 0.5;
   let dw, dh, dx, dy;
   if (imgRatio > canvasRatio) {
     dh = ch;
     dw = ch * imgRatio;
-    dx = (cw - dw) / 2;
+    dx = (cw - dw) * objPosX;
     dy = 0;
   } else {
     dw = cw;
