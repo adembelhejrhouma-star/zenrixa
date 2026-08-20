@@ -1555,103 +1555,85 @@
         height: 36px;
       }
 
-      /* Section 1 (hero + Product Lifecycle chips + cards): ONE seamless orange
-         gradient on the section container so the background is continuous across
-         the full stacked height on mobile. The VR person canvas is re-enabled and
-         layered INSIDE the section: above the gradient (z-index 1) but below the
-         content (overlay z-index 2), anchored to the top of the hero so it scrolls
-         with the section and never sits over the pills. It is transparent around
-         the drawn frame, so the unified gradient stays continuous behind the pills. */
-      .vr-content {
-        background-image: linear-gradient(
-          180deg,
-          #8a1d04 0%,
-          #d13c02 30%,
-          #f06008 55%,
-          #f7751b 100%
-        );
-        background-size: cover;
-        background-position: center;
-        background-repeat: no-repeat;
-      }
-      #vr-canvas {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100vh;
-        z-index: 1;
-        object-fit: cover;
-        object-position: center 20%;
-        pointer-events: none;
-        -webkit-mask-image: linear-gradient(
-          to bottom,
-          transparent 0%,
-          transparent 33.5%,
-          black 39.5%,
-          black 60%,
-          transparent 66%,
-          transparent 100%
-        );
-        mask-image: linear-gradient(
-          to bottom,
-          transparent 0%,
-          transparent 33.5%,
-          black 39.5%,
-          black 60%,
-          transparent 66%,
-          transparent 100%
-        );
-      }
-
+      /* Section 1 hero — same structure as the desktop: the VR man animation is a
+         full-screen FIXED background (object-fit: cover) exactly like the PC, and
+         the hero content is overlaid in the same two-column grid (text left,
+         showcase card right). No extra container background: the animation frame
+         itself is the background everywhere, so the person fills the screen and the
+         pills / cards scroll continuously over it with no seams. */
       .sticky-wrap canvas {
         object-fit: contain;
       }
 
-      /* Hero layout: heading / stars / buttons stacked vertically over the
-         background, showcase card pinned to the lower part of the section. */
-      .hero-wrap {
-        align-items: stretch;
-        padding: 16px 24px 24px;
+      /* Mirror the desktop hero layout: two columns, vertically centered. */
+      .vr-hero .hero-wrap {
+        padding: 16px 12px 24px;
       }
 
       .hero-grid {
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-        gap: 24px;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+        gap: 12px;
       }
 
       .hero-left {
-        gap: 20px;
+        gap: 14px;
       }
 
       h1 {
+        font-size: 26px;
+        line-height: 1.1;
         max-width: 100%;
       }
+
+      .tag {
+        font-size: 9px;
+        letter-spacing: 0.18em;
+      }
+
+      .stars-row {
+        gap: 8px;
+        padding: 8px 12px;
+        font-size: 11px;
+      }
+      .stars-row .stars svg { width: 12px; height: 12px; }
+      .stars-row span { white-space: nowrap; }
+
+      /* Compact buttons so the two-column hero never overflows on narrow screens. */
+      .btns .btn-primary,
+      .btns .btn-secondary {
+        min-height: 44px;
+        padding: 12px 14px;
+        font-size: 12px;
+      }
+      .btn-primary .arrow { width: 20px; height: 20px; }
 
       .hero-right,
       .widget-card {
         width: 100%;
       }
 
-      /* Contrast over the full-height orange background: soften text edges
-         and give the showcase card a subtle scrim so it stays readable. */
-      .tag,
-      .stars-row,
-      h1 {
-        text-shadow: 0 1px 3px rgba(0, 0, 0, 0.45);
-      }
-
+      /* Showcase card over the bright animation: same scrim + blur as the site
+         convention so it stays readable, compacted to the narrow column. */
       .widget-card {
+        padding: 16px;
         background: rgba(12, 4, 2, 0.35);
         backdrop-filter: blur(6px);
         -webkit-backdrop-filter: blur(6px);
         border: 1px solid rgba(255, 255, 255, 0.25);
       }
-
       .widget-card::before {
         background: radial-gradient(ellipse at center, rgba(255, 255, 255, 0.12), transparent);
+      }
+      .widget-title { font-size: 15px; }
+      .widget-desc { font-size: 10px; }
+      .widget-controls { flex-direction: column; align-items: flex-start; gap: 8px; margin-top: 12px; }
+      .widget-arrow, .widget-plus { width: 30px; height: 30px; }
+
+      /* Text stays readable over the bright animation (same scrim as PC). */
+      .tag,
+      .stars-row,
+      h1 {
+        text-shadow: 0 1px 3px rgba(0, 0, 0, 0.45);
       }
 
       /* Glasses/philosophy section: keep the centered text readable over the
@@ -3770,22 +3752,8 @@
       const ch = canvas.height;
       const imgRatio = img.naturalWidth / img.naturalHeight;
       const canvasRatio = cw / ch;
-      const isMobile = window.matchMedia('(max-width: 767px)').matches;
-      const contain = isMobile;
       let dw, dh, dx, dy;
-      if (contain) {
-        if (imgRatio > canvasRatio) {
-          dw = cw;
-          dh = cw / imgRatio;
-          dx = 0;
-          dy = (ch - dh) / 2;
-        } else {
-          dh = ch;
-          dw = ch * imgRatio;
-          dx = (cw - dw) / 2;
-          dy = 0;
-        }
-      } else if (imgRatio > canvasRatio) {
+      if (imgRatio > canvasRatio) {
         dh = ch;
         dw = ch * imgRatio;
         dx = (cw - dw) / 2;
