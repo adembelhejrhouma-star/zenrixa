@@ -2562,21 +2562,30 @@ const glassesImages = [];
 let glassesLoaded = 0;
 let glassesReady = false;
 
+// Mobile fit band (frame-x, measured from frame-001): head blob 482-823,
+// head+neck band 457-970. +6px safety each side -> 451-976 (width 525).
+// Source frame is 1280x720; at a 375px viewport "cover" would draw the head at
+// ~537px wide and crop it to 375px, clipping one edge. Fitting this band into
+// the viewport width at object-position center keeps BOTH head edges visible.
+const VR_FIT_BAND = { minX: 451, maxX: 976 };
+
 function drawCover(ctx, canvas, img) {
   const cw = canvas.width;
   const ch = canvas.height;
   const imgRatio = img.naturalWidth / img.naturalHeight;
   const canvasRatio = cw / ch;
-  // Mobile: keep the same compact cover scale, but shift the crop toward the
-  // right (object-position ~62%) so the man's face — which sits right-of-center
-  // in the frame — is fully visible instead of being clipped at the right edge.
-  const isMobile = window.matchMedia('(max-width: 767px)').matches;
-  const objPosX = isMobile ? 0.65 : 0.5;
   let dw, dh, dx, dy;
-  if (imgRatio > canvasRatio) {
+  if (window.matchMedia('(max-width: 767px)').matches) {
+    const scale = cw / (VR_FIT_BAND.maxX - VR_FIT_BAND.minX);
+    const center = (VR_FIT_BAND.minX + VR_FIT_BAND.maxX) / 2;
+    dw = img.naturalWidth * scale;
+    dh = img.naturalHeight * scale;
+    dx = cw / 2 - center * scale;
+    dy = 0;
+  } else if (imgRatio > canvasRatio) {
     dh = ch;
     dw = ch * imgRatio;
-    dx = (cw - dw) * objPosX;
+    dx = (cw - dw) * 0.5;
     dy = 0;
   } else {
     dw = cw;
