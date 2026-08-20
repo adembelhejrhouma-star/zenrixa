@@ -933,13 +933,13 @@ h1 { font-size: 64px; font-weight: 300; letter-spacing: -0.03em; line-height: 1.
   .pricing-btn { min-height: 52px; padding: 14px 20px; }
   .widget-arrow, .widget-plus { width: 36px; height: 36px; }
 
-  /* Section 1 (hero + Product Lifecycle chips + cards): apply ONE seamless
-     orange gradient to the section container so the background is continuous
-     across the full stacked height on mobile. The fixed full-screen VR canvas
-     used to draw the model as a dark block whose gradient did not match the
-     canvas background, splitting the orange into disconnected blocks behind
-     the pill badges. The canvas is therefore hidden on mobile and the single
-     container background stretches behind everything (cover, center). */
+  /* Section 1 (hero + Product Lifecycle chips + cards): ONE seamless orange
+     gradient on the section container so the background is continuous across
+     the full stacked height on mobile. The VR person canvas is re-enabled and
+     layered INSIDE the section: above the gradient (z-index 1) but below the
+     content (overlay z-index 2), anchored to the top of the hero so it scrolls
+     with the section and never sits over the pills. It is transparent around
+     the drawn frame, so the unified gradient stays continuous behind the pills. */
   .vr-content {
     background-image: linear-gradient(
       180deg,
@@ -952,7 +952,35 @@ h1 { font-size: 64px; font-weight: 300; letter-spacing: -0.03em; line-height: 1.
     background-position: center;
     background-repeat: no-repeat;
   }
-  #vr-canvas { display: none; }
+  #vr-canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    z-index: 1;
+    object-fit: cover;
+    object-position: center 20%;
+    pointer-events: none;
+    -webkit-mask-image: linear-gradient(
+      to bottom,
+      transparent 0%,
+      transparent 33.5%,
+      black 39.5%,
+      black 60%,
+      transparent 66%,
+      transparent 100%
+    );
+    mask-image: linear-gradient(
+      to bottom,
+      transparent 0%,
+      transparent 33.5%,
+      black 39.5%,
+      black 60%,
+      transparent 66%,
+      transparent 100%
+    );
+  }
   .sticky-wrap canvas { object-fit: contain; }
 
   /* Hero layout: heading / stars / buttons stacked vertically over the
@@ -1673,9 +1701,9 @@ h1 { font-size: 64px; font-weight: 300; letter-spacing: -0.03em; line-height: 1.
 </head>
 <body>
 
-<canvas id="vr-canvas"></canvas>
-
 <div class="vr-content">
+  <canvas id="vr-canvas"></canvas>
+
   <div class="overlay">
     <div class="vr-hero">
       <header>
