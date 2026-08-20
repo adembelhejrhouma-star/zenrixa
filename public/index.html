@@ -933,21 +933,26 @@ h1 { font-size: 64px; font-weight: 300; letter-spacing: -0.03em; line-height: 1.
   .pricing-btn { min-height: 52px; padding: 14px 20px; }
   .widget-arrow, .widget-plus { width: 36px; height: 36px; }
 
-  /* Hero VR image: show the full frame on small screens so the man's
-     profile and orange visor stay visible on the right side, matching the
-     original framing. The canvas background continues the animation's
-     orange gradient edge-to-edge so there are no black bars behind the
-     header or the showcase card. */
-  #vr-canvas {
-    object-fit: contain;
-    background: linear-gradient(
+  /* Section 1 (hero + Product Lifecycle chips + cards): apply ONE seamless
+     orange gradient to the section container so the background is continuous
+     across the full stacked height on mobile. The fixed full-screen VR canvas
+     used to draw the model as a dark block whose gradient did not match the
+     canvas background, splitting the orange into disconnected blocks behind
+     the pill badges. The canvas is therefore hidden on mobile and the single
+     container background stretches behind everything (cover, center). */
+  .vr-content {
+    background-image: linear-gradient(
       180deg,
       #8a1d04 0%,
       #d13c02 30%,
       #f06008 55%,
       #f7751b 100%
     );
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
   }
+  #vr-canvas { display: none; }
   .sticky-wrap canvas { object-fit: contain; }
 
   /* Hero layout: heading / stars / buttons stacked vertically over the
