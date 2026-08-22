@@ -255,7 +255,7 @@ body {
     box-shadow: 0 15px 40px rgba(0,0,0,0.35);
     z-index: 5;
   }
-  .philosophy-card-desktop:nth-child(2n + 1) { justify-self: end; }
+  .philosophy-card-desktop:nth-child(2n) { justify-self: end; }
 }
 .philosophy-footer-hint {
   width: 100%;
@@ -2079,6 +2079,30 @@ h1 { font-size: 64px; font-weight: 300; letter-spacing: -0.03em; line-height: 1.
             <div class="philosophy-card-desc">Rigorous analytical tracking to ensure compounding revenue and high-contrast operational growth.</div>
           </div>
         </div>
+        <div class="philosophy-card-desktop">
+          <div class="philosophy-card-header"><span class="philosophy-card-number">01</span><div class="philosophy-card-dot"></div></div>
+          <div class="philosophy-card-title">IN-DEPTH ANALYSIS</div>
+          <div class="philosophy-card-desc">We dive deep into operational frameworks to diagnose core issues and map architectural bottlenecks.</div>
+          <div class="card-footer"><div class="philosophy-card-dot"></div></div>
+        </div>
+        <div class="philosophy-card-desktop">
+          <div class="philosophy-card-header"><span class="philosophy-card-number">02</span><div class="philosophy-card-dot"></div></div>
+          <div class="philosophy-card-title">TAILORED STRATEGIES</div>
+          <div class="philosophy-card-desc">Customized strategic roadmaps built precisely to navigate constraints and scale market positioning.</div>
+          <div class="card-footer"><div class="philosophy-card-dot"></div></div>
+        </div>
+        <div class="philosophy-card-desktop">
+          <div class="philosophy-card-header"><span class="philosophy-card-number">03</span><div class="philosophy-card-dot"></div></div>
+          <div class="philosophy-card-title">PROBLEM SOLVED</div>
+          <div class="philosophy-card-desc">Active transition plans to convert critical business roadblocks into high-efficiency workflows.</div>
+          <div class="card-footer"><div class="philosophy-card-dot"></div></div>
+        </div>
+        <div class="philosophy-card-desktop">
+          <div class="philosophy-card-header"><span class="philosophy-card-number">04</span><div class="philosophy-card-dot"></div></div>
+          <div class="philosophy-card-title">MEASURABLE METRICS</div>
+          <div class="philosophy-card-desc">Rigorous analytical tracking to ensure compounding revenue and high-contrast operational growth.</div>
+          <div class="card-footer"><div class="philosophy-card-dot"></div></div>
+        </div>
       </div>
 
       <div class="philosophy-text-direct">
@@ -2770,33 +2794,6 @@ function scrollToTarget(target, offset) {
 }
 
 // === Philosophy Section ===
-const philosophyCards = [
-  { id: 'card-1', number: '01', title: 'IN-DEPTH ANALYSIS', desc: 'We dive deep into operational frameworks to diagnose core issues and map architectural bottlenecks.', x: 1, y: -15 },
-  { id: 'card-2', number: '02', title: 'TAILORED STRATEGIES', desc: 'Customized strategic roadmaps built precisely to navigate constraints and scale market positioning.', x: 76, y: -15 },
-  { id: 'card-3', number: '03', title: 'PROBLEM SOLVED', desc: 'Active transition plans to convert critical business roadblocks into high-efficiency workflows.', x: 1, y: 50 },
-  { id: 'card-4', number: '04', title: 'MEASURABLE METRICS', desc: 'Rigorous analytical tracking to ensure compounding revenue and high-contrast operational growth.', x: 76, y: 50 }
-];
-
-function createDesktopCards() {
-  const area = document.getElementById('cards-area');
-  if (window.innerWidth < 768) return;
-  const existing = area.querySelectorAll('.philosophy-card-desktop');
-  existing.forEach(el => el.remove());
-  philosophyCards.forEach(card => {
-    const el = document.createElement('div');
-    el.className = 'philosophy-card-desktop';
-    el.id = 'floating-' + card.id;
-    el.style.left = card.x + '%';
-    el.style.top = card.y + '%';
-    el.innerHTML =
-      '<div class="philosophy-card-header"><span class="philosophy-card-number">' + card.number + '</span><div class="philosophy-card-dot"></div></div>' +
-      '<div class="philosophy-card-title">' + card.title + '</div>' +
-      '<div class="philosophy-card-desc">' + card.desc + '</div>' +
-      '<div class="card-footer"><div class="philosophy-card-dot"></div></div>';
-    area.appendChild(el);
-  });
-}
-
 function initPhilosophyScrollAnim() {
   const section = document.querySelector('.section');
   const lines = document.querySelectorAll('.philosophy-text-line');
@@ -2828,8 +2825,6 @@ function initPhilosophyScrollAnim() {
   apply();
 }
 
-createDesktopCards();
-window.addEventListener('resize', () => { const old = document.querySelectorAll('.philosophy-card-desktop'); if (old.length === 0 && window.innerWidth >= 768) createDesktopCards(); });
 initPhilosophyScrollAnim();
 
 // === About us overlay ===
