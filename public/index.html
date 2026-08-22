@@ -2563,21 +2563,25 @@ let glassesLoaded = 0;
 let glassesReady = false;
 
 // Mobile fit band (frame-x, measured from frame-001): head blob 482-823,
-// head+neck band 457-970. +6px safety each side -> 451-976 (width 525).
-// Source frame is 1280x720; at a 375px viewport "cover" would draw the head at
-// ~537px wide and crop it to 375px, clipping one edge. Fitting this band into
-// the viewport width at object-position center keeps BOTH head edges visible.
-const VR_FIT_BAND = { minX: 451, maxX: 976 };
+  // head+neck band 457-970. +6px safety each side -> 451-976 (width 525).
+  // Source frame is 1280x720; at a 375px viewport "cover" would draw the head at
+  // ~537px wide and crop it to 375px, clipping one edge. Fitting this band into
+  // the viewport width at object-position center keeps BOTH head edges visible.
+  const VR_FIT_BAND = { minX: 451, maxX: 976 };
 
-function drawCover(ctx, canvas, img) {
+  // Glasses/philosophy frames: content is on LEFT (0-350) and RIGHT (950-1279) edges
+  // with dark center (350-950) in later frames. Full frame band (0-1279) captures both sides.
+  const GLASSES_FIT_BAND = { minX: 0, maxX: 1279 };
+
+function drawCover(ctx, canvas, img, fitBand = VR_FIT_BAND) {
   const cw = canvas.width;
   const ch = canvas.height;
   const imgRatio = img.naturalWidth / img.naturalHeight;
   const canvasRatio = cw / ch;
   let dw, dh, dx, dy;
   if (window.matchMedia('(max-width: 767px)').matches) {
-    const scale = cw / (VR_FIT_BAND.maxX - VR_FIT_BAND.minX);
-    const center = (VR_FIT_BAND.minX + VR_FIT_BAND.maxX) / 2;
+    const scale = cw / (fitBand.maxX - fitBand.minX);
+    const center = (fitBand.minX + fitBand.maxX) / 2;
     dw = img.naturalWidth * scale;
     dh = img.naturalHeight * scale;
     dx = cw / 2 - center * scale;
@@ -2616,7 +2620,7 @@ function preload() {
       img.onload = () => {
         glassesLoaded++;
         if (i === 0 && glCtx && isGlassesSectionInView()) {
-          drawCover(glCtx, glassesCanvas, img);
+          drawCover(glCtx, glassesCanvas, img, GLASSES_FIT_BAND);
           lastGlassesFrame = 0;
         }
         if (glassesLoaded === glassesTotal) {
@@ -2667,8 +2671,8 @@ function resizeGlasses() {
 }
 
 function redrawCurrentFrames() {
-  if (vrReady && lastVRFrame >= 0 && vrImages[lastVRFrame]) drawCover(vrCtx, vrCanvas, vrImages[lastVRFrame]);
-  if (glassesCanvas && glassesReady && lastGlassesFrame >= 0 && glassesImages[lastGlassesFrame]) drawCover(glCtx, glassesCanvas, glassesImages[lastGlassesFrame]);
+  if (vrReady && lastVRFrame >= 0 && vrImages[lastVRFrame]) drawCover(vrCtx, vrCanvas, vrImages[lastVRFrame], VR_FIT_BAND);
+  if (glassesCanvas && glassesReady && lastGlassesFrame >= 0 && glassesImages[lastGlassesFrame]) drawCover(glCtx, glassesCanvas, glassesImages[lastGlassesFrame], GLASSES_FIT_BAND);
 }
 
 let lastVRFrame = -1;
@@ -2701,7 +2705,7 @@ function autoPlayGlasses() {
       lastGlassesFrame = i - 1;
       return;
     }
-    if (glassesImages[i]) drawCover(glCtx, glassesCanvas, glassesImages[i]);
+    if (glassesImages[i]) drawCover(glCtx, glassesCanvas, glassesImages[i], GLASSES_FIT_BAND);
     lastGlassesFrame = i;
     i = (i + 1) % total;
     glassesPlayTimer = setTimeout(step, interval);
@@ -2743,7 +2747,7 @@ function onScroll() {
     const frameIdx = Math.round(progress * (glassesTotal - 1));
     if (frameIdx !== lastGlassesFrame) {
       lastGlassesFrame = frameIdx;
-      if (glassesImages[frameIdx]) drawCover(glCtx, glassesCanvas, glassesImages[frameIdx]);
+      if (glassesImages[frameIdx]) drawCover(glCtx, glassesCanvas, glassesImages[frameIdx], GLASSES_FIT_BAND);
     }
   }
 }
