@@ -109,7 +109,12 @@ body {
   user-select: none;
 }
 @media (min-width: 768px) {
-  .philosophy-text-direct { gap: 24px; padding: 0 48px; top: 20vh; }
+  .philosophy-text-direct {
+    top: 50%;
+    transform: translateY(-50%);
+    gap: 24px;
+    padding: 0 48px;
+  }
 }
 .philosophy-text-line {
   color: #fff;
@@ -234,28 +239,38 @@ body {
 @media (min-width: 1024px) {
   .philosophy-card-desktop { width: 300px; }
 }
-/* Desktop: proper grid spacing for the 01/02/03/04 cards so they frame,
-   but never cover, the background model/animation */
+/* Desktop: 4 cards at outer margins - 01/03 far LEFT, 02/04 far RIGHT */
 @media (min-width: 769px) {
   .philosophy-cards-area {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    grid-template-rows: auto auto;
-    align-content: space-between;
-    align-items: start;
-    gap: 32px 48px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+    min-height: 60vh;
+    padding: 40px 60px;
+  }
+  .philosophy-cards-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 40px;
   }
   .philosophy-card-desktop {
     position: static !important;
     left: auto !important;
     top: auto !important;
-    width: min(300px, 100%) !important;
-    background: rgba(0,0,0,0.3);
-    backdrop-filter: blur(8px);
-    box-shadow: 0 15px 40px rgba(0,0,0,0.35);
+    width: 300px;
+    flex-shrink: 0;
+    background: rgba(0,0,0,0.35);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.12);
+    box-shadow: 0 20px 50px rgba(0,0,0,0.4);
     z-index: 5;
   }
-  .philosophy-card-desktop:nth-child(2n) { justify-self: end; }
+  .philosophy-card-desktop:hover {
+    background: rgba(0,0,0,0.5);
+    border-color: rgba(255,255,255,0.2);
+  }
 }
 .philosophy-footer-hint {
   width: 100%;
@@ -2079,29 +2094,33 @@ h1 { font-size: 64px; font-weight: 300; letter-spacing: -0.03em; line-height: 1.
             <div class="philosophy-card-desc">Rigorous analytical tracking to ensure compounding revenue and high-contrast operational growth.</div>
           </div>
         </div>
-        <div class="philosophy-card-desktop">
-          <div class="philosophy-card-header"><span class="philosophy-card-number">01</span><div class="philosophy-card-dot"></div></div>
-          <div class="philosophy-card-title">IN-DEPTH ANALYSIS</div>
-          <div class="philosophy-card-desc">We dive deep into operational frameworks to diagnose core issues and map architectural bottlenecks.</div>
-          <div class="card-footer"><div class="philosophy-card-dot"></div></div>
+        <div class="philosophy-cards-row">
+          <div class="philosophy-card-desktop">
+            <div class="philosophy-card-header"><span class="philosophy-card-number">01</span><div class="philosophy-card-dot"></div></div>
+            <div class="philosophy-card-title">IN-DEPTH ANALYSIS</div>
+            <div class="philosophy-card-desc">We dive deep into operational frameworks to diagnose core issues and map architectural bottlenecks.</div>
+            <div class="card-footer"><div class="philosophy-card-dot"></div></div>
+          </div>
+          <div class="philosophy-card-desktop">
+            <div class="philosophy-card-header"><span class="philosophy-card-number">02</span><div class="philosophy-card-dot"></div></div>
+            <div class="philosophy-card-title">TAILORED STRATEGIES</div>
+            <div class="philosophy-card-desc">Customized strategic roadmaps built precisely to navigate constraints and scale market positioning.</div>
+            <div class="card-footer"><div class="philosophy-card-dot"></div></div>
+          </div>
         </div>
-        <div class="philosophy-card-desktop">
-          <div class="philosophy-card-header"><span class="philosophy-card-number">02</span><div class="philosophy-card-dot"></div></div>
-          <div class="philosophy-card-title">TAILORED STRATEGIES</div>
-          <div class="philosophy-card-desc">Customized strategic roadmaps built precisely to navigate constraints and scale market positioning.</div>
-          <div class="card-footer"><div class="philosophy-card-dot"></div></div>
-        </div>
-        <div class="philosophy-card-desktop">
-          <div class="philosophy-card-header"><span class="philosophy-card-number">03</span><div class="philosophy-card-dot"></div></div>
-          <div class="philosophy-card-title">PROBLEM SOLVED</div>
-          <div class="philosophy-card-desc">Active transition plans to convert critical business roadblocks into high-efficiency workflows.</div>
-          <div class="card-footer"><div class="philosophy-card-dot"></div></div>
-        </div>
-        <div class="philosophy-card-desktop">
-          <div class="philosophy-card-header"><span class="philosophy-card-number">04</span><div class="philosophy-card-dot"></div></div>
-          <div class="philosophy-card-title">MEASURABLE METRICS</div>
-          <div class="philosophy-card-desc">Rigorous analytical tracking to ensure compounding revenue and high-contrast operational growth.</div>
-          <div class="card-footer"><div class="philosophy-card-dot"></div></div>
+        <div class="philosophy-cards-row">
+          <div class="philosophy-card-desktop">
+            <div class="philosophy-card-header"><span class="philosophy-card-number">03</span><div class="philosophy-card-dot"></div></div>
+            <div class="philosophy-card-title">PROBLEM SOLVED</div>
+            <div class="philosophy-card-desc">Active transition plans to convert critical business roadblocks into high-efficiency workflows.</div>
+            <div class="card-footer"><div class="philosophy-card-dot"></div></div>
+          </div>
+          <div class="philosophy-card-desktop">
+            <div class="philosophy-card-header"><span class="philosophy-card-number">04</span><div class="philosophy-card-dot"></div></div>
+            <div class="philosophy-card-title">MEASURABLE METRICS</div>
+            <div class="philosophy-card-desc">Rigorous analytical tracking to ensure compounding revenue and high-contrast operational growth.</div>
+            <div class="card-footer"><div class="philosophy-card-dot"></div></div>
+          </div>
         </div>
       </div>
 
