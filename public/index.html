@@ -90,18 +90,10 @@ body {
 }
 .philosophy-reset-btn:active { transform: scale(0.95); }
 .philosophy-reset-btn svg { width: 14px; height: 14px; }
-.philosophy-backdrop {
+
+.philosophy-text-direct {
   position: absolute;
   inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  pointer-events: none;
-  user-select: none;
-  z-index: 0;
-  padding: 0 16px;
-}
-.philosophy-backdrop-inner {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -110,9 +102,13 @@ body {
   gap: 16px;
   max-width: 1152px;
   width: 100%;
+  padding: 0 16px;
+  z-index: 2;
+  pointer-events: none;
+  user-select: none;
 }
 @media (min-width: 768px) {
-  .philosophy-backdrop-inner { gap: 24px; }
+  .philosophy-text-direct { gap: 24px; padding: 0 48px; }
 }
 .philosophy-text-line {
   color: #fff;
@@ -1021,12 +1017,7 @@ h1 { font-size: 64px; font-weight: 300; letter-spacing: -0.03em; line-height: 1.
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.95), 0 4px 24px rgba(0, 0, 0, 0.85);
   }
 
-  .philosophy-backdrop-inner {
-    background: rgba(0, 0, 0, 0.35);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 16px;
+  .philosophy-text-direct {
     padding: 28px 20px;
   }
 
@@ -2089,15 +2080,13 @@ h1 { font-size: 64px; font-weight: 300; letter-spacing: -0.03em; line-height: 1.
         </div>
       </div>
 
-      <div class="philosophy-backdrop">
-        <div class="philosophy-backdrop-inner">
+      <div class="philosophy-text-direct">
           <span class="philosophy-text-line" data-delay="0">you come to us</span>
           <span class="philosophy-text-line" data-delay="0.1">with</span>
           <span class="philosophy-text-line italic" data-delay="0.2">challenges,</span>
           <span class="philosophy-text-line" data-delay="0.3">we turn them into</span>
           <span class="philosophy-text-line bold" data-delay="0.4">opportunities</span>
         </div>
-      </div>
 
       
       
