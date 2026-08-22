@@ -17,5 +17,21 @@
         "API_KEY": "{env:TESTSPRITE_API_KEY}"
       }
     }
-  }
+  },
+  "provider": {
+    "manifest": {
+      "npm": "@ai-sdk/openai-compatible",
+      "name": "Manifest",
+      "options": {
+        "baseURL": "https://app.manifest.build/v1",
+        "apiKey": "{env:MANIFEST_API_KEY}"
+      },
+      "models": {
+        "auto": {
+          "name": "Manifest Auto"
+        }
+      }
+    }
+  },
+  "model": "manifest/auto"
 }
