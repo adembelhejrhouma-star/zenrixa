@@ -2569,9 +2569,10 @@ let glassesReady = false;
   // the viewport width at object-position center keeps BOTH head edges visible.
   const VR_FIT_BAND = { minX: 451, maxX: 976 };
 
-  // Glasses/philosophy frames: content is on LEFT (0-350) and RIGHT (950-1279) edges
-  // with dark center (350-950) in later frames. Full frame band (0-1279) captures both sides.
-  const GLASSES_FIT_BAND = { minX: 0, maxX: 1279 };
+  // Glasses/philosophy frames: content is on LEFT (0-350) and RIGHT (912-1279) edges
+  // with dark center (350-912) in later frames. Full frame (0-1279) = 29% scale.
+  // 50% scale @375px requires 750px band (crops ~529px total). Centered band:
+  const GLASSES_FIT_BAND = { minX: 265, maxX: 1015 }; // 750px width, center=640
 
 function drawCover(ctx, canvas, img, fitBand = VR_FIT_BAND) {
   const cw = canvas.width;
