@@ -232,7 +232,6 @@
       <span class="brand-name">Zenrixa</span>
     </div>
     <div class="header-right">
-      <span class="email-display" id="user-email"></span>
       <button class="btn-back" onclick="window.location.href='index.html'" title="Back to home">&#8592;</button>
     </div>
   </header>
@@ -264,7 +263,6 @@
         return;
       }
       await syncUserProfile();
-      document.getElementById('user-email').textContent = user.email;
       document.getElementById('loading').style.display = 'block';
       try {
         const purchases = await getUserPurchases(user.id);

@@ -282,7 +282,6 @@ h1 { font-size: 28px; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 
     <span class="brand-name">Zenrixa</span>
   </div>
   <div class="header-right">
-    <span class="email-display" id="user-email"></span>
     <button class="btn btn-back" onclick="window.location.href='index.html'" title="Back to home">&#8592;</button>
   </div>
 </header>
@@ -420,7 +419,6 @@ async function loadCheckout() {
     window.location.href = 'login.html' + (qs ? '?' + qs : '');
     return;
   }
-  document.getElementById('user-email').textContent = user.email;
 
   const params = new URLSearchParams(window.location.search);
   const planId = params.get('plan');

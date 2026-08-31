@@ -289,7 +289,6 @@
     </div>
     <div class="header-right">
       <span class="role-badge">Provider</span>
-      <span class="email-display" id="user-email"></span>
       <button class="btn btn-site" onclick="window.location.href='index.html'">View Site</button>
       <button class="btn btn-logout" onclick="handleLogout()">Log out</button>
     </div>
@@ -385,7 +384,6 @@
         window.location.href = 'index.html';
         return;
       }
-      document.getElementById('user-email').textContent = user.email;
       await loadStats();
       await loadPurchases();
       await loadUsers();
