@@ -4192,7 +4192,7 @@
     async function handleGoogleAuth() {
       const { data, error } = await supabaseClient.auth.signInWithOAuth({
         provider: 'google',
-        options: { redirectTo: window.location.origin + '/api/auth/callback' }
+        options: { redirectTo: window.location.origin + '/index.html' }
       });
       if (error) {
         await logAuthEvent('google_auth', null, 'failed', error.message);

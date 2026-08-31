@@ -2358,12 +2358,31 @@ h1 { font-size: 64px; font-weight: 300; letter-spacing: -0.03em; line-height: 1.
 </style>
 
 <script src="js/env.js"></script>
-<script src="js/supabase-config.js"></script>
-<script src="js/auth.js"></script>
-<script src="js/purchase-handler.js"></script>
-<script src="js/stripe.js"></script>
+  <script src="js/supabase-config.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/purchase-handler.js"></script>
+  <script src="js/stripe.js"></script>
 
-<script>
+  <script>
+    (async function handleOAuthCallback() {
+      const params = new URLSearchParams(window.location.search);
+      const code = params.get('code');
+      if (code && supabaseClient) {
+        try {
+          const { error } = await supabaseClient.auth.exchangeCodeForSession(code);
+          if (!error) {
+            window.history.replaceState({}, document.title, window.location.pathname);
+            return;
+          }
+        } catch (err) {
+          console.error('OAuth callback error:', err);
+          window.history.replaceState({}, document.title, window.location.pathname + '?error=auth_failed');
+        }
+      }
+    })();
+  </script>
+
+  <script>
 // === Pricing Section ===
 let billingState = 2;
 const planData = {
@@ -2998,7 +3017,7 @@ async function handleLogin(e) {
 async function handleGoogleAuth() {
   const { data, error } = await supabaseClient.auth.signInWithOAuth({
     provider: 'google',
-    options: { redirectTo: window.location.origin + '/api/auth/callback' }
+    options: { redirectTo: window.location.origin + '/index.html' }
   });
   if (error) {
     await logAuthEvent('google_auth', null, 'failed', error.message);
