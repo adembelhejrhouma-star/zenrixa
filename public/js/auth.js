@@ -1,28 +1,13 @@
-const AUTH_API = '/api/auth'
-
-async function apiFetch(endpoint, options = {}) {
-  const res = await fetch(`${AUTH_API}/${endpoint}`, {
-    credentials: 'same-origin',
-    headers: { 'Content-Type': 'application/json', ...options.headers },
-    ...options
-  })
-  const data = await res.json()
-  if (!res.ok) throw new Error(data.error || 'Request failed')
+async function signUp(email, password) {
+  const { data, error } = await supabaseClient.auth.signUp({ email, password })
+  if (error) throw new Error(error.message)
   return data
 }
 
-async function signUp(email, password) {
-  return apiFetch('signup', {
-    method: 'POST',
-    body: JSON.stringify({ email, password })
-  })
-}
-
 async function logIn(email, password) {
-  return apiFetch('login', {
-    method: 'POST',
-    body: JSON.stringify({ email, password })
-  })
+  const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password })
+  if (error) throw new Error(error.message)
+  return data
 }
 
 function getLoginErrorMessage(err) {
@@ -41,13 +26,14 @@ function getLoginErrorMessage(err) {
 }
 
 async function logOut() {
-  return apiFetch('logout', { method: 'POST' })
+  const { error } = await supabaseClient.auth.signOut()
+  if (error) throw new Error(error.message)
 }
 
 async function getCurrentUser() {
   try {
-    const data = await apiFetch('session')
-    return data.user || null
+    const { data: { user } } = await supabaseClient.auth.getUser()
+    return user || null
   } catch {
     return null
   }
@@ -55,8 +41,8 @@ async function getCurrentUser() {
 
 async function getSession() {
   try {
-    const data = await apiFetch('session')
-    return data.user ? { user: data.user } : null
+    const { data: { session } } = await supabaseClient.auth.getSession()
+    return session ? { user: session.user } : null
   } catch {
     return null
   }
@@ -86,14 +72,22 @@ async function getProfile(userId) {
 
 async function getCurrentProfile() {
   try {
-    const data = await apiFetch('session')
-    return data.profile || null
+    const { data: { user } } = await supabaseClient.auth.getUser()
+    if (!user) return null
+    return {
+      id: user.id,
+      email: user.email,
+      role: user.user_metadata?.role || 'user',
+      plan: user.user_metadata?.plan || 'free',
+      full_name: user.user_metadata?.full_name || null,
+      avatar_url: user.user_metadata?.avatar_url || null,
+      created_at: user.created_at
+    }
   } catch {
     return null
   }
 }
 
-// RBAC: check current user's role from auth user metadata
 async function getUserRole() {
   const profile = await getCurrentProfile()
   return profile ? (profile.role || profile.plan) : null
