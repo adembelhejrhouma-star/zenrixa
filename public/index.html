@@ -3044,12 +3044,7 @@ async function updateHeaderAuth() {
       cleanup();
       const profile = await getCurrentProfile();
       const role = profile ? profile.role : 'user';
-const emailSpan = document.createElement('span');
-          emailSpan.id = 'header-user-email';
-          emailSpan.style.cssText = 'font-size:12px;color:#a1a1aa;letter-spacing:0.02em;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;';
-          emailSpan.textContent = 'My Account';
-          area.appendChild(emailSpan);
-      if (role === 'provider') {
+if (role === 'provider') {
         const dashBtn = document.createElement('button');
         dashBtn.id = 'header-dashboard-btn';
         dashBtn.className = 'menu-btn';
