@@ -14,5 +14,5 @@ export async function GET(request: Request) {
     }
   }
 
-  return NextResponse.redirect(`${origin}/landing.html?error=auth_failed`)
+  return NextResponse.redirect(`${origin}/index.html?error=auth_failed`)
 }

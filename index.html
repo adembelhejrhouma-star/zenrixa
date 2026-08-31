@@ -3520,6 +3520,25 @@
   <script src="js/stripe.js"></script>
 
   <script>
+    (async function handleOAuthCallback() {
+      const params = new URLSearchParams(window.location.search);
+      const code = params.get('code');
+      if (code && supabaseClient) {
+        try {
+          const { error } = await supabaseClient.auth.exchangeCodeForSession(code);
+          if (!error) {
+            window.history.replaceState({}, document.title, window.location.pathname);
+            return;
+          }
+        } catch (err) {
+          console.error('OAuth callback error:', err);
+        }
+        window.history.replaceState({}, document.title, window.location.pathname + '?error=auth_failed');
+      }
+    })();
+  </script>
+
+  <script>
     // === Pricing Section ===
     let billingState = 2;
     const planData = {
