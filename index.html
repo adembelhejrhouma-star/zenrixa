@@ -3532,8 +3532,8 @@
           }
         } catch (err) {
           console.error('OAuth callback error:', err);
+          window.history.replaceState({}, document.title, window.location.pathname + '?error=auth_failed');
         }
-        window.history.replaceState({}, document.title, window.location.pathname + '?error=auth_failed');
       }
     })();
   </script>
