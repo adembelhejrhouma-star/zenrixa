@@ -217,7 +217,7 @@ form.addEventListener('submit', async (e) => {
 async function logInWithGoogle() {
   const { error } = await supabaseClient.auth.signInWithOAuth({
     provider: 'google',
-    options: { redirectTo: window.location.origin + '/index.html' }
+    options: { redirectTo: window.location.origin + '/api/auth/callback' }
   });
   if (error) {
     msg.className = 'msg error';
