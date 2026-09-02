@@ -25,25 +25,22 @@ function inferBillingCycle(planName, amount) {
   return 'on_6_months';
 }
 
-async function ensureBrowserSession() {
-  try {
-    const res = await fetch('/api/auth/token', { credentials: 'same-origin' });
-    const data = await res.json();
-    if (res.ok && data.access_token && data.refresh_token) {
-      const { error } = await supabaseClient.auth.setSession({
-        access_token: data.access_token,
-        refresh_token: data.refresh_token
-      });
-      if (!error) return true;
-    }
-  } catch (_) {}
-  return false;
+async function getAuthHeaders() {
+  const { data: { session } } = await supabaseClient.auth.getSession();
+  if (!session?.access_token) {
+    return null;
+  }
+  return {
+    'Authorization': `Bearer ${session.access_token}`,
+    'Content-Type': 'application/json'
+  };
 }
 
 async function recordPurchase(userId, plan, billingCycle, amount) {
   if (!userId) throw new Error('User not authenticated');
-  const sessionSet = await ensureBrowserSession();
-  if (!sessionSet) throw new Error('Unable to establish authenticated session');
+  const headers = await getAuthHeaders();
+  if (!headers) throw new Error('User not authenticated - please log in');
+
   const cycle = billingCycle ? normalizeBillingCycle(billingCycle) : inferBillingCycle(plan, amount);
   const base = {
     user_id: userId,
@@ -53,36 +50,32 @@ async function recordPurchase(userId, plan, billingCycle, amount) {
     currency: 'usd',
     status: 'active'
   };
-  let { data, error } = await supabaseClient
-    .from('purchases')
-    .insert(base)
-    .select()
-    .single();
-  if (error && /billing_cycle/i.test(error.message)) {
-    const { billing_cycle, ...withoutCycle } = base;
-    const fallback = await supabaseClient
-      .from('purchases')
-      .insert(withoutCycle)
-      .select()
-      .single();
-    data = fallback.data;
-    error = fallback.error;
+
+  const res = await fetch('/api/purchases', {
+    method: 'POST',
+    headers,
+    body: JSON.stringify(base)
+  });
+
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({ error: 'Failed to record purchase' }));
+    throw new Error(err.error || `HTTP ${res.status}`);
   }
-  if (error) throw error;
-  return data;
+
+  return res.json();
 }
 
 async function getUserPurchases(userId) {
   if (!userId) return [];
-  const sessionSet = await ensureBrowserSession();
-  if (!sessionSet) throw new Error('Unable to establish authenticated session');
-  const { data, error } = await supabaseClient
-    .from('purchases')
-    .select('*')
-    .eq('user_id', userId)
-    .order('created_at', { ascending: false });
-  if (error) throw error;
-  return data || [];
+  const headers = await getAuthHeaders();
+  if (!headers) throw new Error('User not authenticated - please log in');
+
+  const res = await fetch(`/api/purchases?user_id=${userId}`, { headers });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({ error: 'Failed to fetch purchases' }));
+    throw new Error(err.error || `HTTP ${res.status}`);
+  }
+  return res.json();
 }
 
 async function recordSignupPurchase(userId) {
@@ -106,14 +99,13 @@ async function recordSignupPurchase(userId) {
 
 async function sendEmail(email, subject, html) {
   if (!email || !subject || !html) throw new Error('Email, subject, and html are required');
+  const headers = await getAuthHeaders();
+  if (!headers) throw new Error('User not authenticated - please log in');
+
   const baseUrl = (SUPABASE_URL || '').replace(/\/+$/, '');
   const res = await fetch(baseUrl + '/functions/v1/send-email', {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'apikey': SUPABASE_ANON_KEY,
-      'Authorization': 'Bearer ' + SUPABASE_ANON_KEY
-    },
+    headers,
     body: JSON.stringify({ email, subject, html })
   });
   const data = await res.json().catch(() => ({}));

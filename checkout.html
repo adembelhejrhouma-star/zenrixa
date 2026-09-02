@@ -548,7 +548,13 @@ async function handlePayment() {
     }
     window.location.href = 'account.html';
   } catch (err) {
-    setError(err.message);
+    const msg = err.message || 'Payment failed';
+    if (msg.includes('not authenticated') || msg.includes('Please log in')) {
+      const qs = new URLSearchParams(window.location.search).toString();
+      window.location.href = 'login.html' + (qs ? '?' + qs : '');
+      return;
+    }
+    setError(msg);
     setLoading(false);
   }
 }

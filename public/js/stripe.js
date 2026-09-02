@@ -21,30 +21,25 @@ function requireSupabaseClient() {
   return supabaseClient;
 }
 
-async function getServerAccessToken() {
-  const res = await fetch('/api/auth/token', { credentials: 'same-origin' });
-  const data = await res.json();
-  if (!res.ok || !data.access_token) throw new Error(data.error || 'Not authenticated');
-  return data;
-}
-
-async function ensureSupabaseSession() {
-  const { access_token, refresh_token } = await getServerAccessToken();
-  const client = requireSupabaseClient();
-  const { data: { session }, error } = await client.auth.setSession({
-    access_token,
-    refresh_token
-  });
-  if (error || !session) throw new Error('Not authenticated');
-  return session;
+async function getAuthHeaders() {
+  const { data: { session } } = await supabaseClient.auth.getSession();
+  if (!session?.access_token) {
+    return null;
+  }
+  return {
+    'Authorization': `Bearer ${session.access_token}`,
+    'Content-Type': 'application/json'
+  };
 }
 
 async function invokeAuthenticated(functionName, body) {
-  const { access_token } = await getServerAccessToken();
+  const headers = await getAuthHeaders();
+  if (!headers) throw new Error('User not authenticated - please log in');
+
   const client = requireSupabaseClient();
   const { data, error, response } = await client.functions.invoke(functionName, {
     body,
-    headers: { Authorization: `Bearer ${access_token}` }
+    headers: { Authorization: headers.Authorization }
   });
   if (error) {
     let message = error.message;
@@ -103,7 +98,9 @@ async function recordPurchase(stripeSessionId, planName, amount, currency, statu
   const user = await getCurrentUser();
   if (!user) throw new Error('User not authenticated');
 
-  await ensureSupabaseSession();
+  const headers = await getAuthHeaders();
+  if (!headers) throw new Error('User not authenticated - please log in');
+
   const client = requireSupabaseClient();
   const { data, error } = await client
     .from('purchases')
@@ -125,7 +122,9 @@ async function getPurchaseHistory() {
   const user = await getCurrentUser();
   if (!user) return [];
 
-  await ensureSupabaseSession();
+  const headers = await getAuthHeaders();
+  if (!headers) throw new Error('User not authenticated - please log in');
+
   const client = requireSupabaseClient();
   const { data, error } = await client
     .from('purchases')
