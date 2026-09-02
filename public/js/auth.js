@@ -128,14 +128,28 @@ async function syncUserProfile() {
 }
 
 supabaseClient.auth.onAuthStateChange(async (event, session) => {
-  if (['SIGNED_IN', 'SIGNED_OUT', 'USER_UPDATED'].includes(event)) {
+  if (['INITIAL_SESSION', 'SIGNED_IN', 'SIGNED_OUT'].includes(event)) {
     const user = session?.user
-    const eventType = event === 'SIGNED_IN' ? 'login' : event === 'SIGNED_OUT' ? 'logout' : 'signup'
-    await supabaseClient.from('auth_logs').insert([{
-      event_type: eventType,
-      email: user?.email || null,
-      user_id: user?.id || null,
-      status: 'success'
-    }]).catch(console.error)
+    if (event === 'SIGNED_IN' && user) {
+      try {
+        await supabaseClient.from('auth_logs').insert([{
+          event_type: 'login',
+          email: user.email,
+          user_id: user.id,
+          status: 'success'
+        }])
+      } catch (err) {
+        console.error('Error logging auth event:', err)
+      }
+    } else if (event === 'SIGNED_OUT') {
+      try {
+        await supabaseClient.from('auth_logs').insert([{
+          event_type: 'logout',
+          status: 'success'
+        }])
+      } catch (err) {
+        console.error('Error logging logout event:', err)
+      }
+    }
   }
 })
