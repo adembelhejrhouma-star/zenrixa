@@ -3,7 +3,7 @@ const fs = require('fs');
 const path = require('path');
 
 const framesDir = 'C:\\zip2\\public';
-const testFiles = ['ezgif-frame-003.jpg', 'ezgif-frame-015.jpg', 'ezgif-frame-021.jpg'];
+const testFiles = ['ezgif-frame-003.webp', 'ezgif-frame-015.webp', 'ezgif-frame-021.webp'];
 
 async function sampleColumns(filename) {
   const filepath = path.join(framesDir, filename);

@@ -214,10 +214,20 @@ form.addEventListener('submit', async (e) => {
   }
 });
 
+// Use a fixed redirect URL to avoid domain mismatch issues with cookies
+// This should match the production domain where cookies are set
+function getAuthRedirectUrl() {
+  // In production, use the fixed production domain
+  // For local development, use current origin
+  const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+  const productionDomain = 'https://zenrixa-www999.vercel.app';
+  return isLocalhost ? window.location.origin + '/index.html' : productionDomain + '/index.html';
+}
+
 async function logInWithGoogle() {
   const { error } = await supabaseClient.auth.signInWithOAuth({
     provider: 'google',
-    options: { redirectTo: window.location.origin + '/index.html' }
+    options: { redirectTo: getAuthRedirectUrl() }
   });
   if (error) {
     msg.className = 'msg error';

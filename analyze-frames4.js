@@ -5,9 +5,9 @@ const path = require('path');
 const framesDir = 'C:\\zip2\\public';
 // Check frames from different parts of the animation
 const testFiles = [
-  'ezgif-frame-003.jpg', 'ezgif-frame-015.jpg', 'ezgif-frame-021.jpg',
-  'ezgif-frame-033.jpg', 'ezgif-frame-051.jpg', 'ezgif-frame-072.jpg',
-  'ezgif-frame-100.jpg', 'ezgif-frame-150.jpg', 'ezgif-frame-200.jpg', 'ezgif-frame-239.jpg'
+  'ezgif-frame-003.webp', 'ezgif-frame-015.webp', 'ezgif-frame-021.webp',
+  'ezgif-frame-033.webp', 'ezgif-frame-051.webp', 'ezgif-frame-072.webp',
+  'ezgif-frame-100.webp', 'ezgif-frame-150.webp', 'ezgif-frame-200.webp', 'ezgif-frame-239.webp'
 ];
 
 async function sampleColumns(filename) {

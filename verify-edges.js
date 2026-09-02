@@ -3,7 +3,7 @@ const fs = require('fs');
 const path = require('path');
 
 const framesDir = 'C:\\zip2\\public';
-const testFiles = ['ezgif-frame-003.jpg', 'ezgif-frame-150.jpg', 'ezgif-frame-239.jpg'];
+const testFiles = ['ezgif-frame-003.webp', 'ezgif-frame-150.webp', 'ezgif-frame-239.webp'];
 
 async function findContentEdges(filename) {
   const filepath = path.join(framesDir, filename);

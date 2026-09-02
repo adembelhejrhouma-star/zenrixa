@@ -413,7 +413,18 @@ const cardStyle = {
 };
 
 async function loadCheckout() {
-  const user = await getCurrentUser();
+  // First try getSession() which reads from localStorage (no network request)
+  let user = null;
+  try {
+    const { data: { session } } = await supabaseClient.auth.getSession();
+    user = session?.user || null;
+  } catch {}
+
+  // If no session locally, try getUser() which validates with server (makes network request)
+  if (!user) {
+    user = await getCurrentUser();
+  }
+
   if (!user) {
     const qs = new URLSearchParams(window.location.search).toString();
     window.location.href = 'login.html' + (qs ? '?' + qs : '');
