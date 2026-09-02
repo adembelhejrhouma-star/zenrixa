@@ -67,15 +67,16 @@ async function recordPurchase(userId, plan, billingCycle, amount) {
 
 async function getUserPurchases(userId) {
   if (!userId) return [];
-  const headers = await getAuthHeaders();
-  if (!headers) throw new Error('User not authenticated - please log in');
+  if (!supabaseClient) throw new Error('Supabase client not initialized');
 
-  const res = await fetch(`/api/purchases?user_id=${userId}`, { headers });
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({ error: 'Failed to fetch purchases' }));
-    throw new Error(err.error || `HTTP ${res.status}`);
-  }
-  return res.json();
+  const { data: purchases, error } = await supabaseClient
+    .from('purchases')
+    .select('*')
+    .eq('user_id', userId)
+    .order('created_at', { ascending: false });
+
+  if (error) throw new Error(error.message);
+  return purchases || [];
 }
 
 async function recordSignupPurchase(userId) {
